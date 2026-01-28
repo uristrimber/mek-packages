@@ -145,6 +145,25 @@ interface TerminalPlatformApi {
         operationId: Long,
     )
 
+    fun onStartProcessPaymentIntent(
+        result: Result<PaymentIntentApi>,
+        operationId: Long,
+        paymentIntentId: String,
+        requestDynamicCurrencyConversion: Boolean,
+        surchargeNotice: String?,
+        skipTipping: Boolean,
+        tippingConfiguration: TippingConfigurationApi?,
+        shouldUpdatePaymentIntent: Boolean,
+        customerCancellationEnabled: Boolean,
+        allowRedisplay: AllowRedisplayApi,
+        confirmConfiguration: ConfirmPaymentIntentConfigurationApi?,
+    )
+
+    fun onStopProcessPaymentIntent(
+        result: Result<Unit>,
+        operationId: Long,
+    )
+
     fun onCancelPaymentIntent(
         result: Result<PaymentIntentApi>,
         paymentIntentId: String,
@@ -188,6 +207,19 @@ interface TerminalPlatformApi {
         operationId: Long,
     )
 
+    fun onStartProcessSetupIntent(
+        result: Result<SetupIntentApi>,
+        operationId: Long,
+        setupIntentId: String,
+        allowRedisplay: AllowRedisplayApi,
+        customerCancellationEnabled: Boolean,
+    )
+
+    fun onStopProcessSetupIntent(
+        result: Result<Unit>,
+        operationId: Long,
+    )
+
     fun onCancelSetupIntent(
         result: Result<SetupIntentApi>,
         setupIntentId: String,
@@ -196,7 +228,9 @@ interface TerminalPlatformApi {
     fun onStartCollectRefundPaymentMethod(
         result: Result<Unit>,
         operationId: Long,
-        chargeId: String,
+        chargeId: String?,
+        paymentIntentId: String?,
+        paymentIntentClientSecret: String?,
         amount: Long,
         currency: String,
         metadata: HashMap<String, String>?,
@@ -220,6 +254,25 @@ interface TerminalPlatformApi {
         operationId: Long,
     )
 
+    fun onStartProcessRefund(
+        result: Result<RefundApi>,
+        operationId: Long,
+        chargeId: String?,
+        paymentIntentId: String?,
+        paymentIntentClientSecret: String?,
+        amount: Long,
+        currency: String,
+        metadata: HashMap<String, String>?,
+        reverseTransfer: Boolean?,
+        refundApplicationFee: Boolean?,
+        customerCancellationEnabled: Boolean,
+    )
+
+    fun onStopProcessRefund(
+        result: Result<Unit>,
+        operationId: Long,
+    )
+
     fun onSetReaderDisplay(
         result: Result<Unit>,
         cart: CartApi,
@@ -231,6 +284,17 @@ interface TerminalPlatformApi {
 
     fun onSetTapToPayUXConfiguration(
         configuration: TapToPayUxConfigurationApi,
+    )
+
+    fun onStartEasyConnect(
+        result: Result<ReaderApi>,
+        operationId: Long,
+        configuration: EasyConnectConfigurationApi,
+    )
+
+    fun onStopEasyConnect(
+        result: Result<Unit>,
+        operationId: Long,
     )
 
     private fun onMethodCall(
@@ -326,6 +390,14 @@ interface TerminalPlatformApi {
                     val res = Result<Unit>(result) { null }
                     onStopConfirmPaymentIntent(res, (args[0] as Number).toLong())
                 }
+                "startProcessPaymentIntent" -> {
+                    val res = Result<PaymentIntentApi>(result) { it.serialize() }
+                    onStartProcessPaymentIntent(res, (args[0] as Number).toLong(), args[1] as String, args[2] as Boolean, args[3] as String?, args[4] as Boolean, (args[5] as List<Any?>?)?.let { TippingConfigurationApi.deserialize(it) }, args[6] as Boolean, args[7] as Boolean, (args[8] as Int).let { AllowRedisplayApi.values()[it] }, (args[9] as List<Any?>?)?.let { ConfirmPaymentIntentConfigurationApi.deserialize(it) })
+                }
+                "stopProcessPaymentIntent" -> {
+                    val res = Result<Unit>(result) { null }
+                    onStopProcessPaymentIntent(res, (args[0] as Number).toLong())
+                }
                 "cancelPaymentIntent" -> {
                     val res = Result<PaymentIntentApi>(result) { it.serialize() }
                     onCancelPaymentIntent(res, args[0] as String)
@@ -354,13 +426,21 @@ interface TerminalPlatformApi {
                     val res = Result<Unit>(result) { null }
                     onStopConfirmSetupIntent(res, (args[0] as Number).toLong())
                 }
+                "startProcessSetupIntent" -> {
+                    val res = Result<SetupIntentApi>(result) { it.serialize() }
+                    onStartProcessSetupIntent(res, (args[0] as Number).toLong(), args[1] as String, (args[2] as Int).let { AllowRedisplayApi.values()[it] }, args[3] as Boolean)
+                }
+                "stopProcessSetupIntent" -> {
+                    val res = Result<Unit>(result) { null }
+                    onStopProcessSetupIntent(res, (args[0] as Number).toLong())
+                }
                 "cancelSetupIntent" -> {
                     val res = Result<SetupIntentApi>(result) { it.serialize() }
                     onCancelSetupIntent(res, args[0] as String)
                 }
                 "startCollectRefundPaymentMethod" -> {
                     val res = Result<Unit>(result) { null }
-                    onStartCollectRefundPaymentMethod(res, (args[0] as Number).toLong(), args[1] as String, (args[2] as Number).toLong(), args[3] as String, args[4]?.let { hashMapOf(*(it as HashMap<*, *>).map { (k, v) -> k as String to v as String }.toTypedArray()) }, args[5] as Boolean?, args[6] as Boolean?, args[7] as Boolean)
+                    onStartCollectRefundPaymentMethod(res, (args[0] as Number).toLong(), args[1] as String?, args[2] as String?, args[3] as String?, (args[4] as Number).toLong(), args[5] as String, args[6]?.let { hashMapOf(*(it as HashMap<*, *>).map { (k, v) -> k as String to v as String }.toTypedArray()) }, args[7] as Boolean?, args[8] as Boolean?, args[9] as Boolean)
                 }
                 "stopCollectRefundPaymentMethod" -> {
                     val res = Result<Unit>(result) { null }
@@ -374,6 +454,14 @@ interface TerminalPlatformApi {
                     val res = Result<Unit>(result) { null }
                     onStopConfirmRefund(res, (args[0] as Number).toLong())
                 }
+                "startProcessRefund" -> {
+                    val res = Result<RefundApi>(result) { it.serialize() }
+                    onStartProcessRefund(res, (args[0] as Number).toLong(), args[1] as String?, args[2] as String?, args[3] as String?, (args[4] as Number).toLong(), args[5] as String, args[6]?.let { hashMapOf(*(it as HashMap<*, *>).map { (k, v) -> k as String to v as String }.toTypedArray()) }, args[7] as Boolean?, args[8] as Boolean?, args[9] as Boolean)
+                }
+                "stopProcessRefund" -> {
+                    val res = Result<Unit>(result) { null }
+                    onStopProcessRefund(res, (args[0] as Number).toLong())
+                }
                 "setReaderDisplay" -> {
                     val res = Result<Unit>(result) { null }
                     onSetReaderDisplay(res, (args[0] as List<Any?>).let { CartApi.deserialize(it) })
@@ -385,6 +473,14 @@ interface TerminalPlatformApi {
                 "setTapToPayUXConfiguration" -> {
                     onSetTapToPayUXConfiguration((args[0] as List<Any?>).let { TapToPayUxConfigurationApi.deserialize(it) })
                     result.success(null)
+                }
+                "startEasyConnect" -> {
+                    val res = Result<ReaderApi>(result) { it.serialize() }
+                    onStartEasyConnect(res, (args[0] as Number).toLong(), (args[1] as List<Any?>).let { EasyConnectConfigurationApi.deserialize(it) })
+                }
+                "stopEasyConnect" -> {
+                    val res = Result<Unit>(result) { null }
+                    onStopEasyConnect(res, (args[0] as Number).toLong())
                 }
             }
         } catch (e: PlatformError) {
@@ -766,6 +862,22 @@ enum class ChargeStatusApi {
     SUCCEEDED, PENDING, FAILED;
 }
 
+data class ConfirmPaymentIntentConfigurationApi(
+    val returnUrl: String?,
+    val surcharge: SurchargeConfigurationApi?,
+) {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): ConfirmPaymentIntentConfigurationApi {
+            return ConfirmPaymentIntentConfigurationApi(
+                returnUrl = serialized[0] as String?,
+                surcharge = (serialized[1] as List<Any?>?)?.let { SurchargeConfigurationApi.deserialize(it) },
+            )
+        }
+    }
+}
+
 enum class ConfirmationMethodApi {
     AUTOMATIC, MANUAL;
 }
@@ -777,6 +889,7 @@ sealed class ConnectionConfigurationApi {
         ): ConnectionConfigurationApi {
             return when (serialized[0]) {
                 "BluetoothConnectionConfiguration" -> BluetoothConnectionConfigurationApi.deserialize(serialized.drop(1))
+                "AppsOnDevicesConnectionConfiguration" -> AppsOnDevicesConnectionConfigurationApi.deserialize(serialized.drop(1))
                 "HandoffConnectionConfiguration" -> HandoffConnectionConfigurationApi.deserialize(serialized.drop(1))
                 "InternetConnectionConfiguration" -> InternetConnectionConfigurationApi.deserialize(serialized.drop(1))
                 "TapToPayConnectionConfiguration" -> TapToPayConnectionConfigurationApi.deserialize(serialized.drop(1))
@@ -798,6 +911,17 @@ data class BluetoothConnectionConfigurationApi(
             return BluetoothConnectionConfigurationApi(
                 autoReconnectOnUnexpectedDisconnect = serialized[0] as Boolean,
                 locationId = serialized[1] as String,
+            )
+        }
+    }
+}
+
+class AppsOnDevicesConnectionConfigurationApi: ConnectionConfigurationApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): AppsOnDevicesConnectionConfigurationApi {
+            return AppsOnDevicesConnectionConfigurationApi(
             )
         }
     }
@@ -871,15 +995,15 @@ data class UsbConnectionConfigurationApi(
 }
 
 enum class ConnectionStatusApi {
-    NOT_CONNECTED, CONNECTED, CONNECTING, DISCOVERING;
+    NOT_CONNECTED, CONNECTED, CONNECTING, DISCOVERING, RECONNECTING;
 }
 
 enum class DeviceTypeApi {
-    CHIPPER1_X, CHIPPER2_X, STRIPE_M2, TAP_TO_PAY, VERIFONE_P400, WISE_CUBE, WISE_PAD3, WISE_PAD3S, WISE_POS_E, WISE_POS_E_DEVKIT, ETNA, STRIPE_S700, STRIPE_S700_DEVKIT, STRIPE_S710, STRIPE_S710_DEVKIT, VERIFONE_V660P, VERIFONE_M425, VERIFONE_M450, VERIFONE_P630, VERIFONE_UX700, VERIFONE_V660P_DEVKIT, VERIFONE_UX700_DEVKIT;
+    CHIPPER1_X, CHIPPER2_X, STRIPE_M2, TAP_TO_PAY, VERIFONE_P400, WISE_CUBE, WISE_PAD3, WISE_PAD3S, WISE_POS_E, WISE_POS_E_DEVKIT, ETNA, STRIPE_S700, STRIPE_S700_DEVKIT, STRIPE_S710, STRIPE_S710_DEVKIT, STRIPE_T600, STRIPE_T600_DEVKIT, STRIPE_T610, STRIPE_T610_DEVKIT, VERIFONE_V660P, VERIFONE_V660PA, VERIFONE_M425, VERIFONE_M450, VERIFONE_P630, VERIFONE_UX700, VERIFONE_V660P_DEVKIT, VERIFONE_UX700_DEVKIT, VERIFONE_VM100, VERIFONE_VP100;
 }
 
 enum class DisconnectReasonApi {
-    UNKNOWN, DISCONNECT_REQUESTED, REBOOT_REQUESTED, SECURITY_REBOOT, CRITICALLY_LOW_BATTERY, POWERED_OFF, BLUETOOTH_DISABLED, USB_DISCONNECTED, IDLE_POWER_DOWN, BLUETOOTH_SIGNAL_LOST;
+    UNKNOWN, DISCONNECT_REQUESTED, REBOOT_REQUESTED, SECURITY_REBOOT, CRITICALLY_LOW_BATTERY, POWERED_OFF, BLUETOOTH_DISABLED, USB_DISCONNECTED, IDLE_POWER_DOWN, BLUETOOTH_SIGNAL_LOST, BLUETOOTH_PEER_REMOVED_PAIRING_INFORMATION;
 }
 
 sealed class DiscoveryConfigurationApi {
@@ -890,6 +1014,7 @@ sealed class DiscoveryConfigurationApi {
             return when (serialized[0]) {
                 "BluetoothDiscoveryConfiguration" -> BluetoothDiscoveryConfigurationApi.deserialize(serialized.drop(1))
                 "BluetoothProximityDiscoveryConfiguration" -> BluetoothProximityDiscoveryConfigurationApi.deserialize(serialized.drop(1))
+                "AppsOnDevicesDiscoveryConfiguration" -> AppsOnDevicesDiscoveryConfigurationApi.deserialize(serialized.drop(1))
                 "HandoffDiscoveryConfiguration" -> HandoffDiscoveryConfigurationApi.deserialize(serialized.drop(1))
                 "InternetDiscoveryConfiguration" -> InternetDiscoveryConfigurationApi.deserialize(serialized.drop(1))
                 "TapToPayDiscoveryConfiguration" -> TapToPayDiscoveryConfigurationApi.deserialize(serialized.drop(1))
@@ -930,6 +1055,17 @@ data class BluetoothProximityDiscoveryConfigurationApi(
     }
 }
 
+class AppsOnDevicesDiscoveryConfigurationApi: DiscoveryConfigurationApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): AppsOnDevicesDiscoveryConfigurationApi {
+            return AppsOnDevicesDiscoveryConfigurationApi(
+            )
+        }
+    }
+}
+
 class HandoffDiscoveryConfigurationApi: DiscoveryConfigurationApi() {
     companion object {
         fun deserialize(
@@ -942,6 +1078,7 @@ class HandoffDiscoveryConfigurationApi: DiscoveryConfigurationApi() {
 }
 
 data class InternetDiscoveryConfigurationApi(
+    val discoveryFilter: DiscoveryFilterApi?,
     val isSimulated: Boolean,
     val locationId: String?,
     val timeout: Long?,
@@ -951,9 +1088,10 @@ data class InternetDiscoveryConfigurationApi(
             serialized: List<Any?>,
         ): InternetDiscoveryConfigurationApi {
             return InternetDiscoveryConfigurationApi(
-                isSimulated = serialized[0] as Boolean,
-                locationId = serialized[1] as String?,
-                timeout = serialized[2] as Long?,
+                discoveryFilter = (serialized[0] as List<Any?>?)?.let { DiscoveryFilterApi.deserialize(it) },
+                isSimulated = serialized[1] as Boolean,
+                locationId = serialized[2] as String?,
+                timeout = serialized[3] as Long?,
             )
         }
     }
@@ -984,6 +1122,93 @@ data class UsbDiscoveryConfigurationApi(
             return UsbDiscoveryConfigurationApi(
                 isSimulated = serialized[0] as Boolean,
                 timeout = serialized[1] as Long?,
+            )
+        }
+    }
+}
+
+sealed class DiscoveryFilterApi {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): DiscoveryFilterApi {
+            return when (serialized[0]) {
+                "DiscoveryFilterByReaderId" -> DiscoveryFilterByReaderIdApi.deserialize(serialized.drop(1))
+                "DiscoveryFilterBySerialNumber" -> DiscoveryFilterBySerialNumberApi.deserialize(serialized.drop(1))
+                else -> throw Error()
+            }
+        }
+    }
+}
+
+data class DiscoveryFilterByReaderIdApi(
+    val readerId: String,
+): DiscoveryFilterApi()
+
+
+data class DiscoveryFilterBySerialNumberApi(
+    val serialNumber: String,
+): DiscoveryFilterApi()
+
+
+sealed class EasyConnectConfigurationApi {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): EasyConnectConfigurationApi {
+            return when (serialized[0]) {
+                "InternetEasyConnectConfiguration" -> InternetEasyConnectConfigurationApi.deserialize(serialized.drop(1))
+                "AppsOnDevicesEasyConnectionConfiguration" -> AppsOnDevicesEasyConnectionConfigurationApi.deserialize(serialized.drop(1))
+                "TapToPayEasyConnectConfiguration" -> TapToPayEasyConnectConfigurationApi.deserialize(serialized.drop(1))
+                else -> throw Error()
+            }
+        }
+    }
+}
+
+data class InternetEasyConnectConfigurationApi(
+    val connectionConfiguration: InternetConnectionConfigurationApi,
+    val discoveryConfiguration: InternetDiscoveryConfigurationApi,
+): EasyConnectConfigurationApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): InternetEasyConnectConfigurationApi {
+            return InternetEasyConnectConfigurationApi(
+                connectionConfiguration = (serialized[0] as List<Any?>).let { InternetConnectionConfigurationApi.deserialize(it) },
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { InternetDiscoveryConfigurationApi.deserialize(it) },
+            )
+        }
+    }
+}
+
+data class AppsOnDevicesEasyConnectionConfigurationApi(
+    val connectionConfiguration: AppsOnDevicesConnectionConfigurationApi,
+    val discoveryConfiguration: AppsOnDevicesDiscoveryConfigurationApi,
+): EasyConnectConfigurationApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): AppsOnDevicesEasyConnectionConfigurationApi {
+            return AppsOnDevicesEasyConnectionConfigurationApi(
+                connectionConfiguration = (serialized[0] as List<Any?>).let { AppsOnDevicesConnectionConfigurationApi.deserialize(it) },
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { AppsOnDevicesDiscoveryConfigurationApi.deserialize(it) },
+            )
+        }
+    }
+}
+
+data class TapToPayEasyConnectConfigurationApi(
+    val connectionConfiguration: TapToPayConnectionConfigurationApi,
+    val discoveryConfiguration: TapToPayDiscoveryConfigurationApi,
+): EasyConnectConfigurationApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): TapToPayEasyConnectConfigurationApi {
+            return TapToPayEasyConnectConfigurationApi(
+                connectionConfiguration = (serialized[0] as List<Any?>).let { TapToPayConnectionConfigurationApi.deserialize(it) },
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { TapToPayDiscoveryConfigurationApi.deserialize(it) },
             )
         }
     }
@@ -1232,6 +1457,7 @@ sealed class ReaderDelegateAbstractApi {
         ): ReaderDelegateAbstractApi {
             return when (serialized[0]) {
                 "MobileReaderDelegate" -> MobileReaderDelegateApi.deserialize(serialized.drop(1))
+                "AppsOnDevicesReaderDelegate" -> AppsOnDevicesReaderDelegateApi.deserialize(serialized.drop(1))
                 "HandoffReaderDelegate" -> HandoffReaderDelegateApi.deserialize(serialized.drop(1))
                 "InternetReaderDelegate" -> InternetReaderDelegateApi.deserialize(serialized.drop(1))
                 "TapToPayReaderDelegate" -> TapToPayReaderDelegateApi.deserialize(serialized.drop(1))
@@ -1247,6 +1473,17 @@ class MobileReaderDelegateApi: ReaderDelegateAbstractApi() {
             serialized: List<Any?>,
         ): MobileReaderDelegateApi {
             return MobileReaderDelegateApi(
+            )
+        }
+    }
+}
+
+class AppsOnDevicesReaderDelegateApi: ReaderDelegateAbstractApi() {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): AppsOnDevicesReaderDelegateApi {
+            return AppsOnDevicesReaderDelegateApi(
             )
         }
     }
@@ -1499,6 +1736,42 @@ data class SimulatorConfigurationApi(
             )
         }
     }
+}
+
+data class SurchargeConfigurationApi(
+    val amount: Long,
+    val surchargeConsent: SurchargeConsentApi?,
+) {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): SurchargeConfigurationApi {
+            return SurchargeConfigurationApi(
+                amount = (serialized[0] as Number).toLong(),
+                surchargeConsent = (serialized[1] as List<Any?>?)?.let { SurchargeConsentApi.deserialize(it) },
+            )
+        }
+    }
+}
+
+data class SurchargeConsentApi(
+    val collection: SurchargeConsentCollectionApi,
+    val notice: String?,
+) {
+    companion object {
+        fun deserialize(
+            serialized: List<Any?>,
+        ): SurchargeConsentApi {
+            return SurchargeConsentApi(
+                collection = (serialized[0] as Int).let { SurchargeConsentCollectionApi.values()[it] },
+                notice = serialized[1] as String?,
+            )
+        }
+    }
+}
+
+enum class SurchargeConsentCollectionApi {
+    DISABLED, ENABLED;
 }
 
 data class TapToPayUxConfigurationApi(

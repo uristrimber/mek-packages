@@ -64,7 +64,7 @@ class _ReadersScreenState extends ConsumerState<ReadersScreen> with StateTools {
       DiscoveryMethod.bluetoothProximity => BluetoothProximityDiscoveryConfiguration(
           isSimulated: _isSimulated,
         ),
-      DiscoveryMethod.handOff => const HandoffDiscoveryConfiguration(),
+      DiscoveryMethod.appsOnDevices => const AppsOnDevicesDiscoveryConfiguration(),
       DiscoveryMethod.internet => InternetDiscoveryConfiguration(
           isSimulated: _isSimulated,
         ),
@@ -115,8 +115,8 @@ class _ReadersScreenState extends ConsumerState<ReadersScreen> with StateTools {
         DiscoveryMethod.internet => InternetConnectionConfiguration(
             readerDelegate: LoggingInternetReaderDelegate(showSnackBar),
           ),
-        DiscoveryMethod.handOff => HandoffConnectionConfiguration(
-            readerDelegate: LoggingHandoffReaderDelegate(showSnackBar),
+        DiscoveryMethod.appsOnDevices => AppsOnDevicesConnectionConfiguration(
+            readerDelegate: LoggingAppsOnDevicesReaderDelegate(showSnackBar),
           ),
         DiscoveryMethod.usb => UsbConnectionConfiguration(
             locationId: getLocationId(),

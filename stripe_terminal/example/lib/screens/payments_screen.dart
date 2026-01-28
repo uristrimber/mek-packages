@@ -22,7 +22,7 @@ class PaymentsScreen extends ConsumerStatefulWidget {
 
 class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools {
   PaymentIntent? _paymentIntent;
-  CancelableFuture<PaymentIntent>? _collectingPaymentMethod;
+  CancelableFuture<PaymentIntent>? _processingPaymentIntent;
 
   Future<void> _createPaymentIntent() async {
     final paymentIntent = await Terminal.instance.createPaymentIntent(PaymentIntentParameters(
@@ -42,41 +42,35 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
     showSnackBar('Payment intent retrieved!');
   }
 
-  Future<void> _collectPaymentMethod(PaymentIntent paymentIntent) async {
-    final collectingPaymentMethod = Terminal.instance.collectPaymentMethod(
+  Future<void> _processPaymentIntent(PaymentIntent paymentIntent) async {
+    final processingPaymentIntent = Terminal.instance.processPaymentIntent(
       paymentIntent,
       skipTipping: true,
     );
     setState(() {
-      _collectingPaymentMethod = collectingPaymentMethod;
+      _processingPaymentIntent = processingPaymentIntent;
     });
 
     try {
-      final paymentIntentWithPaymentMethod = await collectingPaymentMethod;
+      final processedPaymentIntent = await processingPaymentIntent;
       setState(() {
-        _paymentIntent = paymentIntentWithPaymentMethod;
-        _collectingPaymentMethod = null;
+        _paymentIntent = processedPaymentIntent;
+        _processingPaymentIntent = null;
       });
-      showSnackBar('Payment method collected!');
+      showSnackBar('Payment processed!');
     } on TerminalException catch (exception) {
-      setState(() => _collectingPaymentMethod = null);
+      setState(() => _processingPaymentIntent = null);
       switch (exception.code) {
         case TerminalExceptionCode.canceled:
-          showSnackBar('Collecting Payment method is cancelled!');
+          showSnackBar('Payment processing is cancelled!');
         default:
           rethrow;
       }
     }
   }
 
-  Future<void> _cancelCollectingPaymentMethod(CancelableFuture<PaymentIntent> cancelable) async {
+  Future<void> _cancelProcessingPaymentIntent(CancelableFuture<PaymentIntent> cancelable) async {
     await cancelable.cancel();
-  }
-
-  Future<void> _confirmPaymentIntent(PaymentIntent paymentIntent) async {
-    final processedPaymentIntent = await Terminal.instance.confirmPaymentIntent(paymentIntent);
-    setState(() => _paymentIntent = processedPaymentIntent);
-    showSnackBar('Payment processed!');
   }
 
   @override
@@ -84,7 +78,7 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
     final paymentStatus = ref.watch(widget.paymentStatusListenable);
     final connectedReader = ref.watch(widget.connectedReaderListenable);
     final paymentIntent = _paymentIntent;
-    final collectingPaymentMethod = _collectingPaymentMethod;
+    final processingPaymentIntent = _processingPaymentIntent;
 
     return Scaffold(
       appBar: AppBar(
@@ -110,30 +104,21 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
               child: const Text('Create PaymentIntent via Api and Retrieve it via Sdk'),
             ),
             const SizedBox(height: 8.0),
-            if (collectingPaymentMethod == null)
+            if (processingPaymentIntent == null)
               FilledButton(
                 onPressed: !isMutating &&
                         connectedReader != null &&
                         paymentIntent != null &&
                         paymentIntent.status == PaymentIntentStatus.requiresPaymentMethod
-                    ? () => mutate(() async => _collectPaymentMethod(paymentIntent))
+                    ? () => mutate(() async => _processPaymentIntent(paymentIntent))
                     : null,
-                child: const Text('Collect Payment Method'),
+                child: const Text('Process PaymentIntent'),
               )
             else
               FilledButton(
-                onPressed: () async => _cancelCollectingPaymentMethod(collectingPaymentMethod),
-                child: const Text('Cancel Collecting Payment Method'),
+                onPressed: () async => _cancelProcessingPaymentIntent(processingPaymentIntent),
+                child: const Text('Cancel Processing Payment'),
               ),
-            const SizedBox(height: 8.0),
-            FilledButton(
-              onPressed: !isMutating &&
-                      paymentIntent != null &&
-                      paymentIntent.status == PaymentIntentStatus.requiresConfirmation
-                  ? () => mutate(() async => _confirmPaymentIntent(paymentIntent))
-                  : null,
-              child: const Text('Confirm PaymentIntent'),
-            ),
             const Divider(height: 32.0),
             if (paymentIntent != null)
               ListTile(

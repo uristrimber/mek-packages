@@ -21,14 +21,25 @@ class BluetoothConnectionConfiguration extends ConnectionConfiguration {
   });
 }
 
-class HandoffConnectionConfiguration extends ConnectionConfiguration {
+class AppsOnDevicesConnectionConfiguration extends ConnectionConfiguration {
+  @override
+  @SerializableParam.ignore()
+  final AppsOnDevicesReaderDelegate? readerDelegate;
+
+  const AppsOnDevicesConnectionConfiguration({
+    required this.readerDelegate,
+  });
+}
+
+@Deprecated('Use AppsOnDevicesConnectionConfiguration')
+class HandoffConnectionConfiguration extends AppsOnDevicesConnectionConfiguration {
   @override
   @SerializableParam.ignore()
   final HandoffReaderDelegate? readerDelegate;
 
   const HandoffConnectionConfiguration({
     required this.readerDelegate,
-  });
+  }) : super(readerDelegate: readerDelegate);
 }
 
 class InternetConnectionConfiguration extends ConnectionConfiguration {

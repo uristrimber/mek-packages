@@ -105,7 +105,7 @@ enum TerminalExceptionCode {
   invalidParameter,
 
   /// Error reported when calling collectPaymentMethod with request dynamic currency conversion and
-  /// a CollectConfiguration with updatePaymentIntent set to false.
+  /// a CollectPaymentIntentConfiguration with updatePaymentIntent set to false.
   /// IOS(SCPErrorRequestDynamicCurrencyConversionRequiresUpdatePaymentIntent)
   requestDynamicCurrencyConversionRequiresUpdatePaymentIntent,
 
@@ -491,11 +491,11 @@ enum TerminalExceptionCode {
   offlinePaymentIntentNotFound,
 
   /// Only IOS. Error reported when calling collectPaymentMethod with an offline PaymentIntent
-  /// and a CollectConfiguration with updatePaymentIntent set to true.
+  /// and a CollectPaymentIntentConfiguration with updatePaymentIntent set to true.
   updatePaymentIntentUnavailableWhileOffline,
 
   /// Only IOS. Error reported when calling collectPaymentMethod with offline mode enabled and
-  /// a CollectConfiguration with updatePaymentIntent set to true.
+  /// a CollectPaymentIntentConfiguration with updatePaymentIntent set to true.
   updatePaymentIntentUnavailableWhileOfflineModeEnabled,
 
   /// The reader failed to read the data from the presented payment method. If you encounter
@@ -577,7 +577,7 @@ enum TerminalExceptionCode {
   /// Only Ios. Surcharging is not currently available.
   surchargingNotAvailable,
 
-  /// Only Ios. `surchargeNotice` was specified with a CollectConfiguration with updatePaymentIntent set to false.
+  /// Only Ios. `surchargeNotice` was specified with a CollectPaymentIntentConfiguration with updatePaymentIntent set to false.
   surchargeNoticeRequiresUpdatePaymentIntent,
 
   /// Only Ios. Surcharging was attempted while also using dynamic currency conversion.

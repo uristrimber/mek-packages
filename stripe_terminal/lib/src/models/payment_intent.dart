@@ -43,7 +43,7 @@ class PaymentIntent with _$PaymentIntent {
   /// Charges that were created by this PaymentIntent, if any.
   final List<Charge> charges;
 
-  /// The payment method to be used in this PaymentIntent. Only valid in the intent returned during collectPaymentMethod when using the updatePaymentIntent option in the SCPCollectConfiguration.
+  /// The payment method to be used in this PaymentIntent. Only valid in the intent returned during collectPaymentMethod when using the updatePaymentIntent option in the CollectPaymentIntentConfiguration.
   final PaymentMethod? paymentMethod;
 
   /// ID of the payment method used in this PaymentIntent.
@@ -54,7 +54,7 @@ class PaymentIntent with _$PaymentIntent {
 
   /// Indicates how much the user intends to tip in addition to the amount by at confirmation time.
   /// This is only non-null in the [PaymentIntent] instance returned during collect when using
-  /// updatePaymentIntent set to true in the CollectConfiguration.
+  /// updatePaymentIntent set to true in the CollectPaymentIntentConfiguration.
   ///
   /// After [Terminal.confirmPaymentIntent] the amount will have this tip amount added
   /// to it and the [amountDetails] will contain the breakdown of how much of the amount was a tip.
@@ -336,4 +336,55 @@ class PaymentMethodOptionsParameters with _$PaymentMethodOptionsParameters {
   const PaymentMethodOptionsParameters({
     required this.cardPresentParameters,
   });
+}
+
+/// Configuration for confirming a payment intent.
+@immutable
+class ConfirmPaymentIntentConfiguration {
+  /// The URL to redirect the customer back to after authentication.
+  final String? returnUrl;
+
+  /// Configuration for surcharge collection during confirmation.
+  final SurchargeConfiguration? surcharge;
+
+  const ConfirmPaymentIntentConfiguration({
+    this.returnUrl,
+    this.surcharge,
+  });
+}
+
+/// Configuration for surcharge collection during payment confirmation.
+@immutable
+class SurchargeConfiguration {
+  /// The surcharge amount to apply to the transaction.
+  final int amount;
+
+  /// Configuration for surcharge consent collection.
+  final SurchargeConsent? surchargeConsent;
+
+  const SurchargeConfiguration({
+    required this.amount,
+    this.surchargeConsent,
+  });
+}
+
+/// Configuration for surcharge consent collection.
+@immutable
+class SurchargeConsent {
+  /// Whether to collect surcharge consent from the customer.
+  final SurchargeConsentCollection collection;
+
+  /// Optional message displayed on the surcharge consent screen.
+  final String? notice;
+
+  const SurchargeConsent({
+    this.collection = SurchargeConsentCollection.disabled,
+    this.notice,
+  });
+}
+
+/// Represents the surcharge consent collection state.
+enum SurchargeConsentCollection {
+  disabled,
+  enabled,
 }

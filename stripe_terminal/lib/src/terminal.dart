@@ -6,6 +6,7 @@ import 'package:mek_stripe_terminal/src/cancellable_future.dart';
 import 'package:mek_stripe_terminal/src/models/cart.dart';
 import 'package:mek_stripe_terminal/src/models/connection_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/discovery_configuration.dart';
+import 'package:mek_stripe_terminal/src/models/easy_connect_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/location.dart';
 import 'package:mek_stripe_terminal/src/models/payment.dart';
 import 'package:mek_stripe_terminal/src/models/payment_intent.dart';
@@ -144,6 +145,16 @@ class Terminal {
     return _controller!.stream;
   }
 
+  /// Discovers and connects to a reader in a single call.
+  CancelableFuture<Reader> easyConnect(EasyConnectConfiguration configuration) {
+    return CancelableFuture(_platform.stopEasyConnect, (id) async {
+      return await _platform.startEasyConnect(
+        operationId: id,
+        configuration: configuration,
+      );
+    });
+  }
+
   /// Attempts to connect to the given reader, with the connection type dependent on config.
   ///
   /// If the connect succeeds, the future will be complete with the connected reader, and the
@@ -274,7 +285,7 @@ class Terminal {
     bool skipTipping = false,
     TippingConfiguration? tippingConfiguration,
     bool shouldUpdatePaymentIntent = false,
-    bool customerCancellationEnabled = false,
+    bool customerCancellationEnabled = true,
     AllowRedisplay allowRedisplay = AllowRedisplay.unspecified,
   }) {
     return CancelableFuture(_platform.stopCollectPaymentMethod, (id) async {
@@ -288,6 +299,37 @@ class Terminal {
         shouldUpdatePaymentIntent: shouldUpdatePaymentIntent,
         customerCancellationEnabled: customerCancellationEnabled,
         allowRedisplay: allowRedisplay,
+      );
+    });
+  }
+
+  /// Processes a PaymentIntent by collecting a payment method and confirming it.
+  ///
+  /// This is a convenience method that combines [collectPaymentMethod] and
+  /// [confirmPaymentIntent] into a single call.
+  CancelableFuture<PaymentIntent> processPaymentIntent(
+    PaymentIntent paymentIntent, {
+    bool requestDynamicCurrencyConversion = false,
+    String? surchargeNotice,
+    bool skipTipping = false,
+    TippingConfiguration? tippingConfiguration,
+    bool shouldUpdatePaymentIntent = false,
+    bool customerCancellationEnabled = true,
+    AllowRedisplay allowRedisplay = AllowRedisplay.unspecified,
+    ConfirmPaymentIntentConfiguration? confirmConfiguration,
+  }) {
+    return CancelableFuture(_platform.stopProcessPaymentIntent, (id) async {
+      return await _platform.startProcessPaymentIntent(
+        operationId: id,
+        paymentIntentId: paymentIntent.id,
+        requestDynamicCurrencyConversion: requestDynamicCurrencyConversion,
+        surchargeNotice: surchargeNotice,
+        skipTipping: skipTipping,
+        tippingConfiguration: tippingConfiguration,
+        shouldUpdatePaymentIntent: shouldUpdatePaymentIntent,
+        customerCancellationEnabled: customerCancellationEnabled,
+        allowRedisplay: allowRedisplay,
+        confirmConfiguration: confirmConfiguration,
       );
     });
   }
@@ -392,7 +434,7 @@ class Terminal {
   CancelableFuture<SetupIntent> collectSetupIntentPaymentMethod(
     SetupIntent setupIntent, {
     required AllowRedisplay allowRedisplay,
-    bool customerCancellationEnabled = false,
+    bool customerCancellationEnabled = true,
   }) {
     return CancelableFuture(_platform.stopCollectSetupIntentPaymentMethod, (id) async {
       return await _platform.startCollectSetupIntentPaymentMethod(
@@ -420,6 +462,25 @@ class Terminal {
   CancelableFuture<SetupIntent> confirmSetupIntent(SetupIntent setupIntent) {
     return CancelableFuture(_platform.stopConfirmSetupIntent, (id) async {
       return await _platform.startConfirmSetupIntent(id, setupIntent.id);
+    });
+  }
+
+  /// Processes a SetupIntent by collecting a payment method and confirming it.
+  ///
+  /// This is a convenience method that combines [collectSetupIntentPaymentMethod] and
+  /// [confirmSetupIntent] into a single call.
+  CancelableFuture<SetupIntent> processSetupIntent(
+    SetupIntent setupIntent, {
+    required AllowRedisplay allowRedisplay,
+    bool customerCancellationEnabled = true,
+  }) {
+    return CancelableFuture(_platform.stopProcessSetupIntent, (id) async {
+      return await _platform.startProcessSetupIntent(
+        operationId: id,
+        setupIntentId: setupIntent.id,
+        allowRedisplay: allowRedisplay,
+        customerCancellationEnabled: customerCancellationEnabled,
+      );
     });
   }
 
@@ -470,18 +531,60 @@ class Terminal {
   ///   in an amount proportional to the amount of the charge refunded.
   /// - [customerCancellationEnabled] Whether to show a cancel button in transaction UI on Stripe smart readers.
   CancelableFuture<void> collectRefundPaymentMethod({
-    required String chargeId,
+    String? chargeId,
+    String? paymentIntentId,
+    String? paymentIntentClientSecret,
     required int amount,
     required String currency,
     Map<String, String>? metadata,
     bool? reverseTransfer,
     bool? refundApplicationFee,
-    bool customerCancellationEnabled = false,
+    bool customerCancellationEnabled = true,
   }) {
+    _validateRefundParameters(
+      chargeId: chargeId,
+      paymentIntentId: paymentIntentId,
+      paymentIntentClientSecret: paymentIntentClientSecret,
+    );
     return CancelableFuture(_platform.stopCollectRefundPaymentMethod, (id) async {
       return await _platform.startCollectRefundPaymentMethod(
         operationId: id,
         chargeId: chargeId,
+        paymentIntentId: paymentIntentId,
+        paymentIntentClientSecret: paymentIntentClientSecret,
+        amount: amount,
+        currency: currency,
+        metadata: metadata,
+        reverseTransfer: reverseTransfer,
+        refundApplicationFee: refundApplicationFee,
+        customerCancellationEnabled: customerCancellationEnabled,
+      );
+    });
+  }
+
+  /// Processes a refund by collecting the payment method and confirming it.
+  CancelableFuture<Refund> processRefund({
+    String? chargeId,
+    String? paymentIntentId,
+    String? paymentIntentClientSecret,
+    required int amount,
+    required String currency,
+    Map<String, String>? metadata,
+    bool? reverseTransfer,
+    bool? refundApplicationFee,
+    bool customerCancellationEnabled = true,
+  }) {
+    _validateRefundParameters(
+      chargeId: chargeId,
+      paymentIntentId: paymentIntentId,
+      paymentIntentClientSecret: paymentIntentClientSecret,
+    );
+    return CancelableFuture(_platform.stopProcessRefund, (id) async {
+      return await _platform.startProcessRefund(
+        operationId: id,
+        chargeId: chargeId,
+        paymentIntentId: paymentIntentId,
+        paymentIntentClientSecret: paymentIntentClientSecret,
         amount: amount,
         currency: currency,
         metadata: metadata,
@@ -544,5 +647,22 @@ class Terminal {
     };
     newController.onCancel = () async => await subscription.cancel();
     return newController;
+  }
+
+  void _validateRefundParameters({
+    String? chargeId,
+    String? paymentIntentId,
+    String? paymentIntentClientSecret,
+  }) {
+    if (chargeId == null && paymentIntentId == null) {
+      throw ArgumentError(
+        'Either chargeId or paymentIntentId must be provided to refund.',
+      );
+    }
+    if (paymentIntentId != null && paymentIntentClientSecret == null) {
+      throw ArgumentError(
+        'paymentIntentClientSecret is required when paymentIntentId is provided.',
+      );
+    }
   }
 }

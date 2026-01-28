@@ -3,12 +3,14 @@ library stripe_terminal;
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:mek_stripe_terminal/mek_stripe_terminal.dart';
 import 'package:mek_stripe_terminal/src/models/card.dart';
 import 'package:mek_stripe_terminal/src/models/cart.dart';
 import 'package:mek_stripe_terminal/src/models/charge.dart';
 import 'package:mek_stripe_terminal/src/models/connection_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/disconnect_reason.dart';
 import 'package:mek_stripe_terminal/src/models/discovery_configuration.dart';
+import 'package:mek_stripe_terminal/src/models/easy_connect_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/location.dart';
 import 'package:mek_stripe_terminal/src/models/payment.dart';
 import 'package:mek_stripe_terminal/src/models/payment_intent.dart';
@@ -108,6 +110,22 @@ abstract class TerminalPlatform {
 
   Future<void> stopConfirmPaymentIntent(int operationId);
 
+  @MethodApi(swift: MethodApiType.callbacks)
+  Future<PaymentIntent> startProcessPaymentIntent({
+    required int operationId,
+    required String paymentIntentId,
+    required bool requestDynamicCurrencyConversion,
+    required String? surchargeNotice,
+    required bool skipTipping,
+    required TippingConfiguration? tippingConfiguration,
+    required bool shouldUpdatePaymentIntent,
+    required bool customerCancellationEnabled,
+    required AllowRedisplay allowRedisplay,
+    required ConfirmPaymentIntentConfiguration? confirmConfiguration,
+  });
+
+  Future<void> stopProcessPaymentIntent(int operationId);
+
   Future<PaymentIntent> cancelPaymentIntent(String paymentIntentId);
 //endregion
 
@@ -138,6 +156,16 @@ abstract class TerminalPlatform {
 
   Future<void> stopConfirmSetupIntent(int operationId);
 
+  @MethodApi(swift: MethodApiType.callbacks)
+  Future<SetupIntent> startProcessSetupIntent({
+    required int operationId,
+    required String setupIntentId,
+    required AllowRedisplay allowRedisplay,
+    required bool customerCancellationEnabled,
+  });
+
+  Future<void> stopProcessSetupIntent(int operationId);
+
   Future<SetupIntent> cancelSetupIntent(String setupIntentId);
 //endregion
 
@@ -146,7 +174,9 @@ abstract class TerminalPlatform {
   @MethodApi(swift: MethodApiType.callbacks)
   Future<void> startCollectRefundPaymentMethod({
     required int operationId,
-    required String chargeId,
+    required String? chargeId,
+    required String? paymentIntentId,
+    required String? paymentIntentClientSecret,
     required int amount,
     required String currency,
     required Map<String, String>? metadata,
@@ -162,6 +192,22 @@ abstract class TerminalPlatform {
 
   Future<void> stopConfirmRefund(int operationId);
 
+  @MethodApi(swift: MethodApiType.callbacks)
+  Future<Refund> startProcessRefund({
+    required int operationId,
+    required String? chargeId,
+    required String? paymentIntentId,
+    required String? paymentIntentClientSecret,
+    required int amount,
+    required String currency,
+    required Map<String, String>? metadata,
+    required bool? reverseTransfer,
+    required bool? refundApplicationFee,
+    required bool customerCancellationEnabled,
+  });
+
+  Future<void> stopProcessRefund(int operationId);
+
 //endregion
 
 //region Display information to customers
@@ -172,6 +218,16 @@ abstract class TerminalPlatform {
 
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<void> setTapToPayUXConfiguration(TapToPayUxConfiguration configuration);
+//endregion
+
+//region EasyConnect
+  @MethodApi(swift: MethodApiType.callbacks)
+  Future<Reader> startEasyConnect({
+    required int operationId,
+    required EasyConnectConfiguration configuration,
+  });
+
+  Future<void> stopEasyConnect(int operationId);
 //endregion
 
   // TODO: add support to collectData and setLocalMobileUxConfiguration methods
