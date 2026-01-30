@@ -128,10 +128,7 @@ class TerminalPlatformPlugin(
     }
 
     override fun onClearCachedCredentials() {
-        val result = terminal.clearCachedCredentials()
-        if (!result.isSuccessful()) {
-            throw result.error.toPlatformError()
-        }
+        terminal.clearCachedCredentials()
         clean()
     }
 
