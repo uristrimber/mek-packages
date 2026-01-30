@@ -225,35 +225,6 @@ interface TerminalPlatformApi {
         setupIntentId: String,
     )
 
-    fun onStartCollectRefundPaymentMethod(
-        result: Result<Unit>,
-        operationId: Long,
-        chargeId: String?,
-        paymentIntentId: String?,
-        paymentIntentClientSecret: String?,
-        amount: Long,
-        currency: String,
-        metadata: HashMap<String, String>?,
-        reverseTransfer: Boolean?,
-        refundApplicationFee: Boolean?,
-        customerCancellationEnabled: Boolean,
-    )
-
-    fun onStopCollectRefundPaymentMethod(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
-    fun onStartConfirmRefund(
-        result: Result<RefundApi>,
-        operationId: Long,
-    )
-
-    fun onStopConfirmRefund(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
     fun onStartProcessRefund(
         result: Result<RefundApi>,
         operationId: Long,
@@ -437,22 +408,6 @@ interface TerminalPlatformApi {
                 "cancelSetupIntent" -> {
                     val res = Result<SetupIntentApi>(result) { it.serialize() }
                     onCancelSetupIntent(res, args[0] as String)
-                }
-                "startCollectRefundPaymentMethod" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStartCollectRefundPaymentMethod(res, (args[0] as Number).toLong(), args[1] as String?, args[2] as String?, args[3] as String?, (args[4] as Number).toLong(), args[5] as String, args[6]?.let { hashMapOf(*(it as HashMap<*, *>).map { (k, v) -> k as String to v as String }.toTypedArray()) }, args[7] as Boolean?, args[8] as Boolean?, args[9] as Boolean)
-                }
-                "stopCollectRefundPaymentMethod" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopCollectRefundPaymentMethod(res, (args[0] as Number).toLong())
-                }
-                "startConfirmRefund" -> {
-                    val res = Result<RefundApi>(result) { it.serialize() }
-                    onStartConfirmRefund(res, (args[0] as Number).toLong())
-                }
-                "stopConfirmRefund" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopConfirmRefund(res, (args[0] as Number).toLong())
                 }
                 "startProcessRefund" -> {
                     val res = Result<RefundApi>(result) { it.serialize() }

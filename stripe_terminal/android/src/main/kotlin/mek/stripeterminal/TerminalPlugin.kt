@@ -660,95 +660,9 @@ class TerminalPlatformPlugin(
     // endregion
 
     // region Saving payment details for later use
-    private var cancelablesCollectRefundPaymentMethod = HashMap<Long, Cancelable>()
     private var processRefundCancelables = HashMap<Long, Cancelable>()
 
-    override fun onStartCollectRefundPaymentMethod(
-        result: Result<Unit>,
-        operationId: Long,
-        chargeId: String?,
-        paymentIntentId: String?,
-        paymentIntentClientSecret: String?,
-        amount: Long,
-        currency: String,
-        metadata: HashMap<String, String>?,
-        reverseTransfer: Boolean?,
-        refundApplicationFee: Boolean?,
-        customerCancellationEnabled: Boolean
-    ) {
-        val customerCancellation = if (customerCancellationEnabled) {
-            CustomerCancellation.ENABLE_IF_AVAILABLE
-        } else {
-            CustomerCancellation.DISABLE_IF_AVAILABLE
-        }
-        val config =
-            CollectRefundConfiguration.Builder().setCustomerCancellation(customerCancellation)
-
-        val params = buildRefundParameters(
-            chargeId = chargeId,
-            paymentIntentId = paymentIntentId,
-            paymentIntentClientSecret = paymentIntentClientSecret,
-            amount = amount,
-            currency = currency,
-            metadata = metadata,
-            reverseTransfer = reverseTransfer,
-            refundApplicationFee = refundApplicationFee
-        )
-
-        cancelablesCollectRefundPaymentMethod[operationId] =
-            terminal.collectRefundPaymentMethod(
-                params,
-                config.build(),
-                object : TerminalErrorHandler(result::error), Callback {
-                    override fun onFailure(e: TerminalException) {
-                        cancelablesCollectRefundPaymentMethod.remove(operationId)
-                        super.onFailure(e)
-                    }
-
-                    override fun onSuccess() {
-                        cancelablesCollectRefundPaymentMethod.remove(operationId)
-                        result.success(Unit)
-                    }
-                }
-            )
-    }
-
-    override fun onStopCollectRefundPaymentMethod(result: Result<Unit>, operationId: Long) {
-        cancelablesCollectRefundPaymentMethod
-            .remove(operationId)
-            ?.cancel(
-                object : TerminalErrorHandler(result::error), Callback {
-                    override fun onSuccess() = result.success(Unit)
-                }
-            )
-    }
-
-    private var confirmRefundCancelables = HashMap<Long, Cancelable>()
     private var easyConnectCancelables = HashMap<Long, Cancelable>()
-
-    override fun onStartConfirmRefund(result: Result<RefundApi>, operationId: Long) {
-        confirmRefundCancelables[operationId] = terminal.confirmRefund(
-            object : TerminalErrorHandler(result::error), RefundCallback {
-                override fun onFailure(e: TerminalException) {
-                    confirmRefundCancelables.remove(operationId)
-                    super.onFailure(e)
-                }
-
-                override fun onSuccess(refund: Refund) {
-                    confirmRefundCancelables.remove(operationId)
-                    result.success(refund.toApi())
-                }
-            }
-        )
-    }
-
-    override fun onStopConfirmRefund(result: Result<Unit>, operationId: Long) {
-        confirmRefundCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler(result::error), Callback {
-                override fun onSuccess() = result.success(Unit)
-            }
-        )
-    }
     override fun onStartProcessRefund(
         result: Result<RefundApi>,
         operationId: Long,
@@ -911,10 +825,6 @@ class TerminalPlatformPlugin(
         processSetupIntentCancelables = hashMapOf()
         setupIntents = hashMapOf()
 
-        cancelablesCollectRefundPaymentMethod.values.forEach { it.cancel(EmptyCallback()) }
-        cancelablesCollectRefundPaymentMethod = hashMapOf()
-        confirmRefundCancelables.values.forEach { it.cancel(EmptyCallback()) }
-        confirmRefundCancelables = hashMapOf()
         processRefundCancelables.values.forEach { it.cancel(EmptyCallback()) }
         processRefundCancelables = hashMapOf()
         easyConnectCancelables.values.forEach { it.cancel(EmptyCallback()) }

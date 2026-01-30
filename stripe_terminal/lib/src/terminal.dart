@@ -495,30 +495,17 @@ class Terminal {
 
 //region Card-present refunds
 
-  /// Initiates an in-person refund by collecting the payment method that is to be refunded.
+  /// Processes an in-person refund by collecting the payment method and confirming it.
   ///
   /// Some payment methods, like Interac Debit payments, require that in-person payments
   /// also be refunded while the cardholder is present. The cardholder must present
   /// the Interac card to the card reader; these payments cannot be refunded via the dashboard or the API.
   ///
-  /// For payment methods that don’t require the cardholder be present,
+  /// For payment methods that don't require the cardholder be present,
   /// see https://stripe.com/docs/terminal/payments/refunds
   ///
-  /// This method, along with confirmRefund, allow you to design an in-person refund flow into your app.
-  ///
-  /// After resolving with the error, you may call [collectRefundPaymentMethod] again to either
-  /// try the same card again, or try a different card.
-  ///
-  /// If collecting a payment method collected, you can call [confirmRefund] to finish refunding
-  /// the payment method.
-  ///
-  /// Calling any other SDK methods between [collectRefundPaymentMethod] and [confirmRefund]
-  /// will result in undefined behavior.
-  ///
-  /// Note that if [collectRefundPaymentMethod] is canceled, this method throw a [TerminalExceptionCode.canceled] error.
-  ///
   /// - [chargeId] The ID of the charge to be refunded.
-  /// - [amount] The amount of the refund, provided in the currency’s smallest unit.
+  /// - [amount] The amount of the refund, provided in the currency's smallest unit.
   /// - [currency] Three-letter ISO currency code. Must be a supported currency.
   /// - [metadata] Set of key-value pairs that you can attach to an object. This can be useful
   ///   for storing additional information about the object in a structured format.
@@ -530,39 +517,6 @@ class Terminal {
   ///   the full application fee will be refunded. Otherwise, the application fee will be refunded
   ///   in an amount proportional to the amount of the charge refunded.
   /// - [customerCancellationEnabled] Whether to show a cancel button in transaction UI on Stripe smart readers.
-  CancelableFuture<void> collectRefundPaymentMethod({
-    String? chargeId,
-    String? paymentIntentId,
-    String? paymentIntentClientSecret,
-    required int amount,
-    required String currency,
-    Map<String, String>? metadata,
-    bool? reverseTransfer,
-    bool? refundApplicationFee,
-    bool customerCancellationEnabled = true,
-  }) {
-    _validateRefundParameters(
-      chargeId: chargeId,
-      paymentIntentId: paymentIntentId,
-      paymentIntentClientSecret: paymentIntentClientSecret,
-    );
-    return CancelableFuture(_platform.stopCollectRefundPaymentMethod, (id) async {
-      return await _platform.startCollectRefundPaymentMethod(
-        operationId: id,
-        chargeId: chargeId,
-        paymentIntentId: paymentIntentId,
-        paymentIntentClientSecret: paymentIntentClientSecret,
-        amount: amount,
-        currency: currency,
-        metadata: metadata,
-        reverseTransfer: reverseTransfer,
-        refundApplicationFee: refundApplicationFee,
-        customerCancellationEnabled: customerCancellationEnabled,
-      );
-    });
-  }
-
-  /// Processes a refund by collecting the payment method and confirming it.
   CancelableFuture<Refund> processRefund({
     String? chargeId,
     String? paymentIntentId,
@@ -592,23 +546,6 @@ class Terminal {
         refundApplicationFee: refundApplicationFee,
         customerCancellationEnabled: customerCancellationEnabled,
       );
-    });
-  }
-
-  /// Confirms an in-person refund after the refund payment method has been collected.
-  ///
-  /// When [confirmRefund] fails, the SDK returns an error that either includes the failed [Refund].
-  ///
-  /// 1. If the refund property is null, the request to Stripe’s servers timed out and the refund’s
-  ///   status is null. We recommend that you retry [confirmRefund] with the original parameters.
-  /// 2. If the ConfirmRefundError has a failure_reason, the refund was declined. We recommend
-  ///   that you take action based on the decline code you received.
-  ///
-  /// Note: collectRefundPaymentMethod:completion and confirmRefund are only available for payment
-  ///   methods that require in-person refunds. For all other refunds, use the Stripe Dashboard or the Stripe API.
-  CancelableFuture<Refund> confirmRefund() {
-    return CancelableFuture(_platform.stopConfirmRefund, (id) async {
-      return await _platform.startConfirmRefund(id);
     });
   }
 //endregion

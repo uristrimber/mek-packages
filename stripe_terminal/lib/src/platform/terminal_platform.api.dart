@@ -454,69 +454,6 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> startCollectRefundPaymentMethod({
-    required int operationId,
-    required String? chargeId,
-    required String? paymentIntentId,
-    required String? paymentIntentClientSecret,
-    required int amount,
-    required String currency,
-    required Map<String, String>? metadata,
-    required bool? reverseTransfer,
-    required bool? refundApplicationFee,
-    required bool customerCancellationEnabled,
-  }) async {
-    try {
-      await _$channel.invokeMethod('startCollectRefundPaymentMethod', [
-        operationId,
-        chargeId,
-        paymentIntentId,
-        paymentIntentClientSecret,
-        amount,
-        currency,
-        metadata?.map((k, v) => MapEntry(k, v)),
-        reverseTransfer,
-        refundApplicationFee,
-        customerCancellationEnabled
-      ]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopCollectRefundPaymentMethod(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopCollectRefundPaymentMethod', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<Refund> startConfirmRefund(int operationId) async {
-    try {
-      final result = await _$channel.invokeMethod('startConfirmRefund', [operationId]);
-      return _$deserializeRefund(result as List);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopConfirmRefund(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopConfirmRefund', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
   Future<Refund> startProcessRefund({
     required int operationId,
     required String? chargeId,
@@ -719,9 +656,6 @@ List<Object?> _$serializeConfirmPaymentIntentConfiguration(
         ConfirmPaymentIntentConfiguration deserialized) =>
     [
       deserialized.returnUrl,
-      deserialized.surcharge != null
-          ? _$serializeSurchargeConfiguration(deserialized.surcharge!)
-          : null
     ];
 List<Object?> _$serializeConnectionConfiguration(ConnectionConfiguration deserialized) =>
     switch (deserialized) {
@@ -1029,14 +963,6 @@ List<Object?> _$serializeSimulatorConfiguration(SimulatorConfiguration deseriali
       deserialized.simulatedTipAmount,
       deserialized.update.index
     ];
-List<Object?> _$serializeSurchargeConfiguration(SurchargeConfiguration deserialized) => [
-      deserialized.amount,
-      deserialized.surchargeConsent != null
-          ? _$serializeSurchargeConsent(deserialized.surchargeConsent!)
-          : null
-    ];
-List<Object?> _$serializeSurchargeConsent(SurchargeConsent deserialized) =>
-    [deserialized.collection.index, deserialized.notice];
 List<Object?> _$serializeTapToPayUxConfiguration(TapToPayUxConfiguration deserialized) => [
       deserialized.colors != null
           ? _$serializeTapToPayUxConfigurationColorScheme(deserialized.colors!)

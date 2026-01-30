@@ -172,27 +172,6 @@ abstract class TerminalPlatform {
 //region Card-present refunds
 
   @MethodApi(swift: MethodApiType.callbacks)
-  Future<void> startCollectRefundPaymentMethod({
-    required int operationId,
-    required String? chargeId,
-    required String? paymentIntentId,
-    required String? paymentIntentClientSecret,
-    required int amount,
-    required String currency,
-    required Map<String, String>? metadata,
-    required bool? reverseTransfer,
-    required bool? refundApplicationFee,
-    required bool customerCancellationEnabled,
-  });
-
-  Future<void> stopCollectRefundPaymentMethod(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
-  Future<Refund> startConfirmRefund(int operationId);
-
-  Future<void> stopConfirmRefund(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
   Future<Refund> startProcessRefund({
     required int operationId,
     required String? chargeId,
