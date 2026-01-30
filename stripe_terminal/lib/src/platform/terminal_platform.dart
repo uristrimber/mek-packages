@@ -91,26 +91,6 @@ abstract class TerminalPlatform {
   Future<PaymentIntent> retrievePaymentIntent(String clientSecret);
 
   @MethodApi(swift: MethodApiType.callbacks)
-  Future<PaymentIntent> startCollectPaymentMethod({
-    required int operationId,
-    required String paymentIntentId,
-    required bool requestDynamicCurrencyConversion,
-    required String? surchargeNotice,
-    required bool skipTipping,
-    required TippingConfiguration? tippingConfiguration,
-    required bool shouldUpdatePaymentIntent,
-    required bool customerCancellationEnabled,
-    required AllowRedisplay allowRedisplay,
-  });
-
-  Future<void> stopCollectPaymentMethod(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
-  Future<PaymentIntent> startConfirmPaymentIntent(int operationId, String paymentIntentId);
-
-  Future<void> stopConfirmPaymentIntent(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
   Future<PaymentIntent> startProcessPaymentIntent({
     required int operationId,
     required String paymentIntentId,

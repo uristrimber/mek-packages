@@ -297,7 +297,7 @@ class TerminalPlatformPlugin(
         )
     }
 
-    private var cancelablesCollectPaymentMethod = HashMap<Long, Cancelable>()
+    private var processPaymentIntentCancelables = HashMap<Long, Cancelable>()
 
     private fun buildCollectPaymentIntentConfiguration(
         requestDynamicCurrencyConversion: Boolean,
@@ -323,59 +323,6 @@ class TerminalPlatformPlugin(
             .setAllowRedisplay(allowRedisplay.toHost())
             .build()
     }
-
-    override fun onStartCollectPaymentMethod(
-        result: Result<PaymentIntentApi>,
-        operationId: Long,
-        paymentIntentId: String,
-        requestDynamicCurrencyConversion: Boolean,
-        surchargeNotice: String?,
-        skipTipping: Boolean,
-        tippingConfiguration: TippingConfigurationApi?,
-        shouldUpdatePaymentIntent: Boolean,
-        customerCancellationEnabled: Boolean,
-        allowRedisplay: AllowRedisplayApi
-    ) {
-        val paymentIntent = findPaymentIntent(paymentIntentId)
-        val config = buildCollectPaymentIntentConfiguration(
-            requestDynamicCurrencyConversion = requestDynamicCurrencyConversion,
-            surchargeNotice = surchargeNotice,
-            skipTipping = skipTipping,
-            tippingConfiguration = tippingConfiguration,
-            shouldUpdatePaymentIntent = shouldUpdatePaymentIntent,
-            customerCancellationEnabled = customerCancellationEnabled,
-            allowRedisplay = allowRedisplay
-        )
-        cancelablesCollectPaymentMethod[operationId] =
-            terminal.collectPaymentMethod(
-                paymentIntent,
-                object : TerminalErrorHandler(result::error), PaymentIntentCallback {
-                    override fun onFailure(e: TerminalException) {
-                        cancelablesCollectPaymentMethod.remove(operationId)
-                        super.onFailure(e)
-                    }
-
-                    override fun onSuccess(paymentIntent: PaymentIntent) {
-                        cancelablesCollectPaymentMethod.remove(operationId)
-                        result.success(paymentIntent.toApi())
-                        paymentIntents[paymentIntent.id!!] = paymentIntent
-                    }
-                },
-                config
-            )
-    }
-
-    override fun onStopCollectPaymentMethod(result: Result<Unit>, operationId: Long) {
-        cancelablesCollectPaymentMethod
-            .remove(operationId)
-            ?.cancel(
-                object : TerminalErrorHandler(result::error), Callback {
-                    override fun onSuccess() = result.success(Unit)
-                }
-            )
-    }
-
-    private var processPaymentIntentCancelables = HashMap<Long, Cancelable>()
 
     override fun onStartProcessPaymentIntent(
         result: Result<PaymentIntentApi>,
@@ -428,42 +375,6 @@ class TerminalPlatformPlugin(
 
     override fun onStopProcessPaymentIntent(result: Result<Unit>, operationId: Long) {
         processPaymentIntentCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler(result::error), Callback {
-                override fun onSuccess() = result.success(Unit)
-            }
-        )
-    }
-
-    private var confirmPaymentIntentCancelables = HashMap<Long, Cancelable>()
-
-
-    override fun onStartConfirmPaymentIntent(
-        result: Result<PaymentIntentApi>,
-        operationId: Long,
-        paymentIntentId: String
-    ) {
-        val paymentIntent = findPaymentIntent(paymentIntentId)
-        confirmPaymentIntentCancelables[operationId]= terminal.confirmPaymentIntent(
-            paymentIntent,
-            object : TerminalErrorHandler(result::error), PaymentIntentCallback {
-                override fun onFailure(e: TerminalException) {
-                    val paymentIntentUpdated = e.paymentIntent
-                    if (paymentIntentUpdated != null) {
-                        paymentIntents[paymentIntentUpdated.id!!] = paymentIntentUpdated
-                    }
-                    super.onFailure(e)
-                }
-
-                override fun onSuccess(paymentIntent: PaymentIntent) {
-                    paymentIntents.remove(paymentIntent.id)
-                    result.success(paymentIntent.toApi())
-                }
-            }
-        )
-    }
-
-    override fun onStopConfirmPaymentIntent(result: Result<Unit>, operationId: Long) {
-        confirmPaymentIntentCancelables.remove(operationId)?.cancel(
             object : TerminalErrorHandler(result::error), Callback {
                 override fun onSuccess() = result.success(Unit)
             }
@@ -734,12 +645,8 @@ class TerminalPlatformPlugin(
 
         discoverReadersSubject.clear()
 
-        cancelablesCollectPaymentMethod.values.forEach { it.cancel(EmptyCallback()) }
-        cancelablesCollectPaymentMethod = hashMapOf()
         processPaymentIntentCancelables.values.forEach { it.cancel(EmptyCallback()) }
         processPaymentIntentCancelables = hashMapOf()
-        confirmPaymentIntentCancelables.values.forEach { it.cancel(EmptyCallback()) }
-        confirmPaymentIntentCancelables = hashMapOf()
         paymentIntents = hashMapOf()
 
         processSetupIntentCancelables.values.forEach { it.cancel(EmptyCallback()) }

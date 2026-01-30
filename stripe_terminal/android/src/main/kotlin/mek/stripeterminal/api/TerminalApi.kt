@@ -116,35 +116,6 @@ interface TerminalPlatformApi {
         clientSecret: String,
     )
 
-    fun onStartCollectPaymentMethod(
-        result: Result<PaymentIntentApi>,
-        operationId: Long,
-        paymentIntentId: String,
-        requestDynamicCurrencyConversion: Boolean,
-        surchargeNotice: String?,
-        skipTipping: Boolean,
-        tippingConfiguration: TippingConfigurationApi?,
-        shouldUpdatePaymentIntent: Boolean,
-        customerCancellationEnabled: Boolean,
-        allowRedisplay: AllowRedisplayApi,
-    )
-
-    fun onStopCollectPaymentMethod(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
-    fun onStartConfirmPaymentIntent(
-        result: Result<PaymentIntentApi>,
-        operationId: Long,
-        paymentIntentId: String,
-    )
-
-    fun onStopConfirmPaymentIntent(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
     fun onStartProcessPaymentIntent(
         result: Result<PaymentIntentApi>,
         operationId: Long,
@@ -320,22 +291,6 @@ interface TerminalPlatformApi {
                 "retrievePaymentIntent" -> {
                     val res = Result<PaymentIntentApi>(result) { it.serialize() }
                     onRetrievePaymentIntent(res, args[0] as String)
-                }
-                "startCollectPaymentMethod" -> {
-                    val res = Result<PaymentIntentApi>(result) { it.serialize() }
-                    onStartCollectPaymentMethod(res, (args[0] as Number).toLong(), args[1] as String, args[2] as Boolean, args[3] as String?, args[4] as Boolean, (args[5] as List<Any?>?)?.let { TippingConfigurationApi.deserialize(it) }, args[6] as Boolean, args[7] as Boolean, (args[8] as Int).let { AllowRedisplayApi.values()[it] })
-                }
-                "stopCollectPaymentMethod" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopCollectPaymentMethod(res, (args[0] as Number).toLong())
-                }
-                "startConfirmPaymentIntent" -> {
-                    val res = Result<PaymentIntentApi>(result) { it.serialize() }
-                    onStartConfirmPaymentIntent(res, (args[0] as Number).toLong(), args[1] as String)
-                }
-                "stopConfirmPaymentIntent" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopConfirmPaymentIntent(res, (args[0] as Number).toLong())
                 }
                 "startProcessPaymentIntent" -> {
                     val res = Result<PaymentIntentApi>(result) { it.serialize() }

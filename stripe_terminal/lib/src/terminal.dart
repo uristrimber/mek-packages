@@ -259,54 +259,9 @@ class Terminal {
   Future<PaymentIntent> retrievePaymentIntent(String clientSecret) async =>
       await _platform.retrievePaymentIntent(clientSecret);
 
-  /// Collects a payment method for the given [PaymentIntent].
-  ///
-  /// Note: [collectPaymentMethod] does not apply any changes to the [PaymentIntent] API object. Updates
-  ///   to the [PaymentIntent] are local to the SDK, and persisted in-memory.
-  ///
-  /// After resolving the error, you may call [collectPaymentMethod] again to either try the same
-  /// card again, or try a different card.
-  ///
-  /// If collecting a payment method succeeds, the method complete with a [PaymentIntent] with status
-  /// [PaymentIntentStatus.requiresConfirmation], indicating that you should call [confirmPaymentIntent] to finish the payment.
-  ///
-  /// Note that if [collectPaymentMethod] is canceled, the future will be complete with a [TerminalExceptionCode.canceled] error.
-  ///
-  /// - [skipTipping] Bypass tipping selection if it would have otherwise been shown.
-  /// - [tippingConfiguration] The tipping configuration for this payment collection.
-  /// - [shouldUpdatePaymentIntent] Whether or not to update the [PaymentIntent] server side during
-  ///   [collectPaymentMethod]. Attempting to collect with [shouldUpdatePaymentIntent] enabled and
-  ///   a [PaymentIntent] created while offline will error with SCPErrorUpdatePaymentIntentUnavailableWhileOffline.
-  /// - [customerCancellationEnabled] Whether to show a cancel button in transaction UI on Stripe smart readers.
-  CancelableFuture<PaymentIntent> collectPaymentMethod(
-    PaymentIntent paymentIntent, {
-    bool requestDynamicCurrencyConversion = false,
-    String? surchargeNotice,
-    bool skipTipping = false,
-    TippingConfiguration? tippingConfiguration,
-    bool shouldUpdatePaymentIntent = false,
-    bool customerCancellationEnabled = true,
-    AllowRedisplay allowRedisplay = AllowRedisplay.unspecified,
-  }) {
-    return CancelableFuture(_platform.stopCollectPaymentMethod, (id) async {
-      return await _platform.startCollectPaymentMethod(
-        operationId: id,
-        paymentIntentId: paymentIntent.id,
-        requestDynamicCurrencyConversion: requestDynamicCurrencyConversion,
-        surchargeNotice: surchargeNotice,
-        skipTipping: skipTipping,
-        tippingConfiguration: tippingConfiguration,
-        shouldUpdatePaymentIntent: shouldUpdatePaymentIntent,
-        customerCancellationEnabled: customerCancellationEnabled,
-        allowRedisplay: allowRedisplay,
-      );
-    });
-  }
-
   /// Processes a PaymentIntent by collecting a payment method and confirming it.
   ///
-  /// This is a convenience method that combines [collectPaymentMethod] and
-  /// [confirmPaymentIntent] into a single call.
+  /// This method collects a payment method and confirms it in one call.
   CancelableFuture<PaymentIntent> processPaymentIntent(
     PaymentIntent paymentIntent, {
     bool requestDynamicCurrencyConversion = false,
@@ -331,37 +286,6 @@ class Terminal {
         allowRedisplay: allowRedisplay,
         confirmConfiguration: confirmConfiguration,
       );
-    });
-  }
-
-  /// Processes a payment after collecting a payment method succeeds.
-  ///
-  /// **Synchronous capture**
-  /// Stripe Terminal uses two-step card payments to prevent unintended and duplicate payments. When
-  /// processPayment completes successfully, a charge has been authorized on the customer’s card,
-  /// but not yet been “captured”. Your app must synchronously notify your backend to capture
-  /// the [PaymentIntent] in order to settle the funds to your account.
-  ///
-  /// **Handling failures**
-  /// ??? When processPayment fails, the SDK returns an error that includes the updated [PaymentIntent].
-  /// Your app should inspect the updated [PaymentIntent] to decide how to retry the payment.
-  ///
-  /// If the updated PaymentIntent is nil, the request to Stripe’s servers timed out and
-  /// the [PaymentIntent]’s status is unknown. We recommend that you retry [confirmPaymentIntent] with
-  /// the original [PaymentIntent]. If you instead choose to abandon the original [PaymentIntent]
-  /// and create a new one, do not capture the original [PaymentIntent]. If you do, you might
-  /// charge your customer twice.
-  ///
-  /// If the updated [PaymentIntent]’s status is still [PaymentIntentStatus.requiresConfirmation]
-  ///   (e.g., the request failed because your app is not connected to the internet), you can call
-  ///   [confirmPaymentIntent] again with the updated [PaymentIntent] to retry the request.
-  ///
-  /// If the updated [PaymentIntent]’s status changes to [PaymentIntentStatus.requiresPaymentMethod]
-  ///   (e.g., the request failed because the card was declined), call [collectPaymentMethod]
-  ///   with the updated [PaymentIntent] to try charging another card.
-  CancelableFuture<PaymentIntent> confirmPaymentIntent(PaymentIntent paymentIntent) {
-    return CancelableFuture(_platform.stopConfirmPaymentIntent, (id) async {
-      return await _platform.startConfirmPaymentIntent(id, paymentIntent.id);
     });
   }
 
