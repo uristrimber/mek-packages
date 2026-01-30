@@ -243,7 +243,7 @@ fun DiscoveryConfigurationApi.toHost(): DiscoveryConfiguration? {
 fun DiscoveryFilterApi?.toHost(): DiscoveryFilter {
     return when (this) {
         is DiscoveryFilterByReaderIdApi -> DiscoveryFilter.ByReaderId(readerId)
-        is DiscoveryFilterBySerialNumberApi -> DiscoveryFilter.BySerialNumber(serialNumber)
+        is DiscoveryFilterBySerialNumberApi -> DiscoveryFilter.BySerial(serialNumber)
         null -> DiscoveryFilter.None
         else -> DiscoveryFilter.None
     }

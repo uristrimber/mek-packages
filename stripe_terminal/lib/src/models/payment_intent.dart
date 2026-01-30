@@ -344,47 +344,7 @@ class ConfirmPaymentIntentConfiguration {
   /// The URL to redirect the customer back to after authentication.
   final String? returnUrl;
 
-  /// Configuration for surcharge collection during confirmation.
-  final SurchargeConfiguration? surcharge;
-
   const ConfirmPaymentIntentConfiguration({
     this.returnUrl,
-    this.surcharge,
   });
-}
-
-/// Configuration for surcharge collection during payment confirmation.
-@immutable
-class SurchargeConfiguration {
-  /// The surcharge amount to apply to the transaction.
-  final int amount;
-
-  /// Configuration for surcharge consent collection.
-  final SurchargeConsent? surchargeConsent;
-
-  const SurchargeConfiguration({
-    required this.amount,
-    this.surchargeConsent,
-  });
-}
-
-/// Configuration for surcharge consent collection.
-@immutable
-class SurchargeConsent {
-  /// Whether to collect surcharge consent from the customer.
-  final SurchargeConsentCollection collection;
-
-  /// Optional message displayed on the surcharge consent screen.
-  final String? notice;
-
-  const SurchargeConsent({
-    this.collection = SurchargeConsentCollection.disabled,
-    this.notice,
-  });
-}
-
-/// Represents the surcharge consent collection state.
-enum SurchargeConsentCollection {
-  disabled,
-  enabled,
 }
