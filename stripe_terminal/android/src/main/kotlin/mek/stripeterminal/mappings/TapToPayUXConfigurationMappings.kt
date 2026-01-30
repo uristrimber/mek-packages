@@ -20,6 +20,12 @@ fun TapToPayUxConfigurationTapZoneApi.toHost(): TapToPayUxConfiguration.TapZone 
     val xBias = position?.xBias?.toFloat()
     val yBias = position?.yBias?.toFloat()
     return when (indicator) {
+        TapToPayUxConfigurationTapZoneIndicatorApi.LEFT ->
+            if (yBias != null) TapToPayUxConfiguration.TapZone.Left(yBias)
+            else TapToPayUxConfiguration.TapZone.Left()
+        TapToPayUxConfigurationTapZoneIndicatorApi.RIGHT ->
+            if (yBias != null) TapToPayUxConfiguration.TapZone.Right(yBias)
+            else TapToPayUxConfiguration.TapZone.Right()
         TapToPayUxConfigurationTapZoneIndicatorApi.ABOVE ->
             if (xBias != null) TapToPayUxConfiguration.TapZone.Above(xBias)
             else TapToPayUxConfiguration.TapZone.Above()

@@ -1728,7 +1728,7 @@ data class TapToPayUxConfigurationTapZoneApi(
 }
 
 enum class TapToPayUxConfigurationTapZoneIndicatorApi {
-    ABOVE, BELOW, FRONT, BEHIND;
+    ABOVE, BELOW, FRONT, BEHIND, LEFT, RIGHT;
 }
 
 data class TapToPayUxConfigurationTapZonePositionApi(

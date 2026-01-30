@@ -31,6 +31,8 @@ enum TapToPayUxConfigurationTapZoneIndicator {
   below,
   front,
   behind,
+  left,
+  right,
 }
 
 class TapToPayUxConfigurationTapZonePosition {
