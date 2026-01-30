@@ -183,30 +183,6 @@ interface TerminalPlatformApi {
         clientSecret: String,
     )
 
-    fun onStartCollectSetupIntentPaymentMethod(
-        result: Result<SetupIntentApi>,
-        operationId: Long,
-        setupIntentId: String,
-        allowRedisplay: AllowRedisplayApi,
-        customerCancellationEnabled: Boolean,
-    )
-
-    fun onStopCollectSetupIntentPaymentMethod(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
-    fun onStartConfirmSetupIntent(
-        result: Result<SetupIntentApi>,
-        operationId: Long,
-        setupIntentId: String,
-    )
-
-    fun onStopConfirmSetupIntent(
-        result: Result<Unit>,
-        operationId: Long,
-    )
-
     fun onStartProcessSetupIntent(
         result: Result<SetupIntentApi>,
         operationId: Long,
@@ -380,22 +356,6 @@ interface TerminalPlatformApi {
                 "retrieveSetupIntent" -> {
                     val res = Result<SetupIntentApi>(result) { it.serialize() }
                     onRetrieveSetupIntent(res, args[0] as String)
-                }
-                "startCollectSetupIntentPaymentMethod" -> {
-                    val res = Result<SetupIntentApi>(result) { it.serialize() }
-                    onStartCollectSetupIntentPaymentMethod(res, (args[0] as Number).toLong(), args[1] as String, (args[2] as Int).let { AllowRedisplayApi.values()[it] }, args[3] as Boolean)
-                }
-                "stopCollectSetupIntentPaymentMethod" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopCollectSetupIntentPaymentMethod(res, (args[0] as Number).toLong())
-                }
-                "startConfirmSetupIntent" -> {
-                    val res = Result<SetupIntentApi>(result) { it.serialize() }
-                    onStartConfirmSetupIntent(res, (args[0] as Number).toLong(), args[1] as String)
-                }
-                "stopConfirmSetupIntent" -> {
-                    val res = Result<Unit>(result) { null }
-                    onStopConfirmSetupIntent(res, (args[0] as Number).toLong())
                 }
                 "startProcessSetupIntent" -> {
                     val res = Result<SetupIntentApi>(result) { it.serialize() }

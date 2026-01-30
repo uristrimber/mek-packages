@@ -486,8 +486,6 @@ class TerminalPlatformPlugin(
 
     // region Saving payment details for later use
     private var setupIntents = HashMap<String, SetupIntent>()
-    private var cancelablesCollectSetupIntentPaymentMethod = HashMap<Long, Cancelable>()
-
     override fun onCreateSetupIntent(
         result: Result<SetupIntentApi>,
         customerId: String?,
@@ -525,80 +523,7 @@ class TerminalPlatformPlugin(
         )
     }
 
-    override fun onStartCollectSetupIntentPaymentMethod(
-        result: Result<SetupIntentApi>,
-        operationId: Long,
-        setupIntentId: String,
-        allowRedisplay: AllowRedisplayApi,
-        customerCancellationEnabled: Boolean
-    ) {
-        val setupIntent = findSetupIntent(setupIntentId)
-        val customerCancellation = if (customerCancellationEnabled) {
-            CustomerCancellation.ENABLE_IF_AVAILABLE
-        } else {
-            CustomerCancellation.DISABLE_IF_AVAILABLE
-        }
-        val config =
-            CollectSetupIntentConfiguration.Builder()
-                .setCustomerCancellation(customerCancellation)
-
-
-        cancelablesCollectSetupIntentPaymentMethod[operationId] =
-            terminal.collectSetupIntentPaymentMethod(
-                setupIntent,
-                allowRedisplay.toHost(),
-                config.build(),
-                object : TerminalErrorHandler(result::error), SetupIntentCallback {
-                    override fun onFailure(e: TerminalException) {
-                        cancelablesCollectSetupIntentPaymentMethod.remove(operationId)
-                        super.onFailure(e)
-                    }
-
-                    override fun onSuccess(setupIntent: SetupIntent) {
-                        cancelablesCollectSetupIntentPaymentMethod.remove(operationId)
-                        setupIntents[setupIntent.id!!] = setupIntent
-                        result.success(setupIntent.toApi())
-                    }
-                }
-            )    }
-
-    override fun onStopCollectSetupIntentPaymentMethod(result: Result<Unit>, operationId: Long) {
-        cancelablesCollectSetupIntentPaymentMethod
-            .remove(operationId)
-            ?.cancel(
-                object : TerminalErrorHandler(result::error), Callback {
-                    override fun onSuccess() = result.success(Unit)
-                }
-            )
-    }
-
-    private var confirmSetupIntentCancelables = HashMap<Long, Cancelable>()
     private var processSetupIntentCancelables = HashMap<Long, Cancelable>()
-
-    override fun onStartConfirmSetupIntent(
-        result: Result<SetupIntentApi>,
-        operationId: Long,
-        setupIntentId: String
-    ) {
-        val setupIntent = findSetupIntent(setupIntentId)
-        confirmSetupIntentCancelables[operationId] = terminal.confirmSetupIntent(
-            setupIntent,
-            object : TerminalErrorHandler(result::error), SetupIntentCallback {
-                override fun onSuccess(setupIntent: SetupIntent) {
-                    setupIntents[setupIntent.id!!] = setupIntent
-                    result.success(setupIntent.toApi())
-                }
-            }
-        )
-    }
-
-    override fun onStopConfirmSetupIntent(result: Result<Unit>, operationId: Long) {
-        confirmSetupIntentCancelables.remove(operationId)?.cancel(
-            object : TerminalErrorHandler(result::error), Callback {
-                override fun onSuccess() = result.success(Unit)
-            }
-        )
-    }
 
     override fun onStartProcessSetupIntent(
         result: Result<SetupIntentApi>,
@@ -817,10 +742,6 @@ class TerminalPlatformPlugin(
         confirmPaymentIntentCancelables = hashMapOf()
         paymentIntents = hashMapOf()
 
-        cancelablesCollectSetupIntentPaymentMethod.values.forEach { it.cancel(EmptyCallback()) }
-        cancelablesCollectSetupIntentPaymentMethod = hashMapOf()
-        confirmSetupIntentCancelables.values.forEach { it.cancel(EmptyCallback()) }
-        confirmSetupIntentCancelables = hashMapOf()
         processSetupIntentCancelables.values.forEach { it.cancel(EmptyCallback()) }
         processSetupIntentCancelables = hashMapOf()
         setupIntents = hashMapOf()

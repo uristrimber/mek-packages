@@ -32,7 +32,7 @@ fun TapToPayUxConfigurationTapZoneApi.toHost(): TapToPayUxConfiguration.TapZone 
         TapToPayUxConfigurationTapZoneIndicatorApi.BEHIND ->
             if (xBias != null && yBias != null) TapToPayUxConfiguration.TapZone.Behind(xBias, yBias)
             else TapToPayUxConfiguration.TapZone.Behind()
-        null -> TapToPayUxConfiguration.TapZone.Default()
+        null -> TapToPayUxConfiguration.TapZone.Default
     }
 }
 

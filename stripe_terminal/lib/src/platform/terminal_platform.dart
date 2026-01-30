@@ -142,21 +142,6 @@ abstract class TerminalPlatform {
   Future<SetupIntent> retrieveSetupIntent(String clientSecret);
 
   @MethodApi(swift: MethodApiType.callbacks)
-  Future<SetupIntent> startCollectSetupIntentPaymentMethod({
-    required int operationId,
-    required String setupIntentId,
-    required AllowRedisplay allowRedisplay,
-    required bool customerCancellationEnabled,
-  });
-
-  Future<void> stopCollectSetupIntentPaymentMethod(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
-  Future<SetupIntent> startConfirmSetupIntent(int operationId, String setupIntentId);
-
-  Future<void> stopConfirmSetupIntent(int operationId);
-
-  @MethodApi(swift: MethodApiType.callbacks)
   Future<SetupIntent> startProcessSetupIntent({
     required int operationId,
     required String setupIntentId,

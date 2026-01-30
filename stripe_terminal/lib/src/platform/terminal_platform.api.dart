@@ -364,58 +364,6 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<SetupIntent> startCollectSetupIntentPaymentMethod({
-    required int operationId,
-    required String setupIntentId,
-    required AllowRedisplay allowRedisplay,
-    required bool customerCancellationEnabled,
-  }) async {
-    try {
-      final result = await _$channel.invokeMethod('startCollectSetupIntentPaymentMethod',
-          [operationId, setupIntentId, allowRedisplay.index, customerCancellationEnabled]);
-      return _$deserializeSetupIntent(result as List);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopCollectSetupIntentPaymentMethod(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopCollectSetupIntentPaymentMethod', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<SetupIntent> startConfirmSetupIntent(
-    int operationId,
-    String setupIntentId,
-  ) async {
-    try {
-      final result =
-          await _$channel.invokeMethod('startConfirmSetupIntent', [operationId, setupIntentId]);
-      return _$deserializeSetupIntent(result as List);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopConfirmSetupIntent(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopConfirmSetupIntent', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
   Future<SetupIntent> startProcessSetupIntent({
     required int operationId,
     required String setupIntentId,

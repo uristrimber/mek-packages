@@ -405,70 +405,11 @@ class Terminal {
   /// Retrieves an [SetupIntent] with a client secret.
   ///
   /// If you’ve created a SetupIntent on your backend, you must retrieve it in the Stripe Terminal
-  /// SDK before calling [collectSetupIntentPaymentMethod].
+  /// SDK before calling [processSetupIntent].
   Future<SetupIntent> retrieveSetupIntent(String clientSecret) async =>
       await _platform.retrieveSetupIntent(clientSecret);
 
-  /// Collects a payment method for the given [SetupIntent].
-  ///
-  /// This method does not update the [SetupIntent] API object. All updates are local to the SDK
-  /// and only persisted in memory. You must confirm the [SetupIntent] to create a PaymentMethod
-  /// API object and (optionally) attach that PaymentMethod to a customer.
-  ///
-  /// After resolving the error, you may call [collectSetupIntentPaymentMethod] again to either
-  /// try the same card again, or try a different card.
-  ///
-  /// If collecting a payment method succeeds returns with a [SetupIntent] with status
-  /// [SetupIntentStatus.requiresConfirmation], indicating that you should call [confirmSetupIntent]
-  /// to finish the payment.
-  ///
-  /// Note that if [collectSetupIntentPaymentMethod] is canceled returns [TerminalExceptionCode.canceled] error.
-  ///
-  /// Collecting cardholder consent
-  ///   Card networks require that you collect consent from the customer before saving and reusing
-  ///   their card information. The SetupIntent confirmation API method normally takes a mandate_data hash that lets you specify details about the customer’s consent. The Stripe Terminal SDK will fill in the mandate_data hash with relevant information, but in order for it to do so, you must specify whether you have gathered consent from the cardholder to collect their payment information in this method’s second parameter.
-  ///
-  ///   The payment method will not be collected without the cardholder’s consent.
-  ///
-  /// - [customerCancellationEnabled] Whether to show a cancel button in transaction UI on Stripe smart readers.
-  CancelableFuture<SetupIntent> collectSetupIntentPaymentMethod(
-    SetupIntent setupIntent, {
-    required AllowRedisplay allowRedisplay,
-    bool customerCancellationEnabled = true,
-  }) {
-    return CancelableFuture(_platform.stopCollectSetupIntentPaymentMethod, (id) async {
-      return await _platform.startCollectSetupIntentPaymentMethod(
-        operationId: id,
-        setupIntentId: setupIntent.id,
-        allowRedisplay: allowRedisplay,
-        customerCancellationEnabled: customerCancellationEnabled,
-      );
-    });
-  }
-
-  /// Confirms a [SetupIntent] after the payment method has been successfully collected.
-  ///
-  /// Handling failures
-  ///   When confirmSetupIntent fails, the SDK returns an error that includes the updated [SetupIntent].
-  ///   Your app should inspect the updated [SetupIntent] to decide how to proceed.
-  ///   1. If the updated [SetupIntent] is null, the request to Stripe’s servers timed out and the
-  ///     [SetupIntent]’s status is null. We recommend that you retry [confirmSetupIntent] with
-  ///     the original [SetupIntent].
-  ///   2. If the updated [SetupIntent]’s status is still [SetupIntentStatus.requiresConfirmation]
-  ///     (e.g., the request failed because your app is not connected to the internet), you can call
-  ///     [confirmSetupIntent] again with the updated [SetupIntent] to retry the request.
-  ///   3. If the updated [SetupIntent]’s status is [SetupIntentStatus.requiresAction], there might
-  ///     be authentication the cardholder must perform offline before the saved PaymentMethod can be used.
-  CancelableFuture<SetupIntent> confirmSetupIntent(SetupIntent setupIntent) {
-    return CancelableFuture(_platform.stopConfirmSetupIntent, (id) async {
-      return await _platform.startConfirmSetupIntent(id, setupIntent.id);
-    });
-  }
-
   /// Processes a SetupIntent by collecting a payment method and confirming it.
-  ///
-  /// This is a convenience method that combines [collectSetupIntentPaymentMethod] and
-  /// [confirmSetupIntent] into a single call.
   CancelableFuture<SetupIntent> processSetupIntent(
     SetupIntent setupIntent, {
     required AllowRedisplay allowRedisplay,

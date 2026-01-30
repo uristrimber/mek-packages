@@ -3,6 +3,9 @@ package mek.stripeterminal.mappings
 import com.stripe.stripeterminal.external.models.AppsOnDevicesEasyConnectionConfiguration
 import com.stripe.stripeterminal.external.models.DiscoveryConfiguration
 import com.stripe.stripeterminal.external.models.EasyConnectConfiguration
+import com.stripe.stripeterminal.external.models.EasyConnectConfiguration.AppsOnDevicesEasyConnectionConfiguration
+import com.stripe.stripeterminal.external.models.EasyConnectConfiguration.InternetEasyConnectConfiguration
+import com.stripe.stripeterminal.external.models.EasyConnectConfiguration.TapToPayEasyConnectConfiguration
 import com.stripe.stripeterminal.external.models.InternetEasyConnectConfiguration
 import com.stripe.stripeterminal.external.models.TapToPayEasyConnectConfiguration
 import mek.stripeterminal.api.AppsOnDevicesEasyConnectionConfigurationApi
