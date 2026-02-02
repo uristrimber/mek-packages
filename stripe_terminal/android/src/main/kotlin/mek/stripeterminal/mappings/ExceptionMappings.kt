@@ -115,6 +115,7 @@ private fun TerminalErrorCode.toApiCode(): TerminalExceptionCodeApi? {
         TerminalErrorCode.READER_SETTINGS_ERROR -> TerminalExceptionCodeApi.READER_SETTINGS_ERROR
         TerminalErrorCode.READER_MISSING_ENCRYPTION_KEYS -> TerminalExceptionCodeApi.READER_MISSING_ENCRYPTION_KEYS
         TerminalErrorCode.INVALID_SURCHARGE_PARAMETER -> TerminalExceptionCodeApi.INVALID_SURCHARGE_PARAMETER
+        TerminalErrorCode.INVALID_MOTO_CONFIGURATION -> TerminalExceptionCodeApi.INVALID_PARAMETER
         TerminalErrorCode.READER_COMMUNICATION_SSL_ERROR -> TerminalExceptionCodeApi.READER_COMMUNICATION_SSL_ERROR
         TerminalErrorCode.TAP_TO_PAY_INSECURE_ENVIRONMENT -> TerminalExceptionCodeApi.TAP_TO_PAY_INSECURE_ENVIRONMENT
         TerminalErrorCode.GENERIC_READER_ERROR -> TerminalExceptionCodeApi.UNEXPECTED_READER_ERROR

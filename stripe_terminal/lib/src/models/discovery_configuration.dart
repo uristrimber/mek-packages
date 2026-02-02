@@ -1,10 +1,12 @@
+import 'package:mek_stripe_terminal/src/models/discovery_filter.dart';
+
 /// Protocol for classes to conform to that apply configuration options for discovering readers.
 ///
 /// You should not implement this protocol yourself; instead, use one of the following:
 ///
 /// - [BluetoothDiscoveryConfiguration]
 /// - [BluetoothProximityDiscoveryConfiguration]
-/// - [HandoffDiscoveryConfiguration]
+/// - [AppsOnDevicesDiscoveryConfiguration]
 /// - [InternetDiscoveryConfiguration]
 /// - [LocalMobileDiscoveryConfiguration]
 /// - [UsbDiscoveryConfiguration]
@@ -59,7 +61,13 @@ class BluetoothProximityDiscoveryConfiguration extends DiscoveryConfiguration {
 }
 
 /// ONLY ON ANDROID
-class HandoffDiscoveryConfiguration extends DiscoveryConfiguration {
+class AppsOnDevicesDiscoveryConfiguration extends DiscoveryConfiguration {
+  const AppsOnDevicesDiscoveryConfiguration();
+}
+
+/// ONLY ON ANDROID
+@Deprecated('Use AppsOnDevicesDiscoveryConfiguration')
+class HandoffDiscoveryConfiguration extends AppsOnDevicesDiscoveryConfiguration {
   const HandoffDiscoveryConfiguration();
 }
 
@@ -77,11 +85,13 @@ class InternetDiscoveryConfiguration extends DiscoveryConfiguration {
   final bool isSimulated;
   final String? locationId;
   final Duration? timeout;
+  final DiscoveryFilter? discoveryFilter;
 
   const InternetDiscoveryConfiguration({
     this.isSimulated = false,
     this.locationId,
     this.timeout,
+    this.discoveryFilter,
   });
 }
 

@@ -16,6 +16,9 @@ enum ConnectionStatus {
   connecting,
 
   discovering,
+
+  /// The SDK is reconnecting to a reader.
+  reconnecting,
 }
 
 /// Information about a card reader that has been discovered by or connected to the SDK.
@@ -170,8 +173,23 @@ enum DeviceType {
   /// Stripe Reader S710 DevKit.
   stripeS710Devkit,
 
+  /// Stripe Reader T600.
+  stripeT600,
+
+  /// Stripe Reader T600 DevKit.
+  stripeT600Devkit,
+
+  /// Stripe Reader T610.
+  stripeT610,
+
+  /// Stripe Reader T610 DevKit.
+  stripeT610Devkit,
+
   /// Verifone V660p
   verifoneV660p,
+
+  /// Verifone V660pa
+  verifoneV660pa,
 
   /// Verifone M425
   verifoneM425,
@@ -190,6 +208,12 @@ enum DeviceType {
 
   /// Verifone UX700 DevKit
   verifoneUx700Devkit,
+
+  /// Verifone VM100
+  verifoneVm100,
+
+  /// Verifone VP100
+  verifoneVp100,
 }
 
 /// A categorization of a reader’s battery charge level.

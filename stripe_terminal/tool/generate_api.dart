@@ -6,6 +6,7 @@ void main() async {
       apiFile: 'lib/src/platform/terminal_platform.dart',
       extraApiFiles: [
         'lib/src/terminal_exception.dart',
+        'lib/src/models/discovery_filter.dart',
       ],
       hostClassSuffix: 'Api',
       packageName: 'mek_stripe_terminal',

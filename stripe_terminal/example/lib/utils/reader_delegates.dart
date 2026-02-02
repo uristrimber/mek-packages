@@ -85,12 +85,12 @@ class LoggingMobileReaderDelegate extends MobileReaderDelegate
       onLog('onReportAvailableUpdate: ${update.version}');
 }
 
-class LoggingHandoffReaderDelegate extends HandoffReaderDelegate
+class LoggingAppsOnDevicesReaderDelegate extends AppsOnDevicesReaderDelegate
     with _LoggingReaderDelegate, _LoggingReaderDisconnectDelegate {
   @override
   final LogListener onLog;
 
-  LoggingHandoffReaderDelegate(this.onLog);
+  LoggingAppsOnDevicesReaderDelegate(this.onLog);
 }
 
 class LoggingInternetReaderDelegate extends InternetReaderDelegate

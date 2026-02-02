@@ -208,7 +208,7 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<PaymentIntent> startCollectPaymentMethod({
+  Future<PaymentIntent> startProcessPaymentIntent({
     required int operationId,
     required String paymentIntentId,
     required bool requestDynamicCurrencyConversion,
@@ -218,9 +218,10 @@ class _$TerminalPlatform implements TerminalPlatform {
     required bool shouldUpdatePaymentIntent,
     required bool customerCancellationEnabled,
     required AllowRedisplay allowRedisplay,
+    required ConfirmPaymentIntentConfiguration? confirmConfiguration,
   }) async {
     try {
-      final result = await _$channel.invokeMethod('startCollectPaymentMethod', [
+      final result = await _$channel.invokeMethod('startProcessPaymentIntent', [
         operationId,
         paymentIntentId,
         requestDynamicCurrencyConversion,
@@ -229,7 +230,10 @@ class _$TerminalPlatform implements TerminalPlatform {
         tippingConfiguration != null ? _$serializeTippingConfiguration(tippingConfiguration) : null,
         shouldUpdatePaymentIntent,
         customerCancellationEnabled,
-        allowRedisplay.index
+        allowRedisplay.index,
+        confirmConfiguration != null
+            ? _$serializeConfirmPaymentIntentConfiguration(confirmConfiguration)
+            : null
       ]);
       return _$deserializePaymentIntent(result as List);
     } on PlatformException catch (exception) {
@@ -239,34 +243,9 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> stopCollectPaymentMethod(int operationId) async {
+  Future<void> stopProcessPaymentIntent(int operationId) async {
     try {
-      await _$channel.invokeMethod('stopCollectPaymentMethod', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<PaymentIntent> startConfirmPaymentIntent(
-    int operationId,
-    String paymentIntentId,
-  ) async {
-    try {
-      final result =
-          await _$channel.invokeMethod('startConfirmPaymentIntent', [operationId, paymentIntentId]);
-      return _$deserializePaymentIntent(result as List);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopConfirmPaymentIntent(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopConfirmPaymentIntent', [operationId]);
+      await _$channel.invokeMethod('stopProcessPaymentIntent', [operationId]);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
       rethrow;
@@ -319,14 +298,14 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<SetupIntent> startCollectSetupIntentPaymentMethod({
+  Future<SetupIntent> startProcessSetupIntent({
     required int operationId,
     required String setupIntentId,
     required AllowRedisplay allowRedisplay,
     required bool customerCancellationEnabled,
   }) async {
     try {
-      final result = await _$channel.invokeMethod('startCollectSetupIntentPaymentMethod',
+      final result = await _$channel.invokeMethod('startProcessSetupIntent',
           [operationId, setupIntentId, allowRedisplay.index, customerCancellationEnabled]);
       return _$deserializeSetupIntent(result as List);
     } on PlatformException catch (exception) {
@@ -336,34 +315,9 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> stopCollectSetupIntentPaymentMethod(int operationId) async {
+  Future<void> stopProcessSetupIntent(int operationId) async {
     try {
-      await _$channel.invokeMethod('stopCollectSetupIntentPaymentMethod', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<SetupIntent> startConfirmSetupIntent(
-    int operationId,
-    String setupIntentId,
-  ) async {
-    try {
-      final result =
-          await _$channel.invokeMethod('startConfirmSetupIntent', [operationId, setupIntentId]);
-      return _$deserializeSetupIntent(result as List);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopConfirmSetupIntent(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopConfirmSetupIntent', [operationId]);
+      await _$channel.invokeMethod('stopProcessSetupIntent', [operationId]);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
       rethrow;
@@ -382,9 +336,11 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> startCollectRefundPaymentMethod({
+  Future<Refund> startProcessRefund({
     required int operationId,
-    required String chargeId,
+    required String? chargeId,
+    required String? paymentIntentId,
+    required String? paymentIntentClientSecret,
     required int amount,
     required String currency,
     required Map<String, String>? metadata,
@@ -393,9 +349,11 @@ class _$TerminalPlatform implements TerminalPlatform {
     required bool customerCancellationEnabled,
   }) async {
     try {
-      await _$channel.invokeMethod('startCollectRefundPaymentMethod', [
+      final result = await _$channel.invokeMethod('startProcessRefund', [
         operationId,
         chargeId,
+        paymentIntentId,
+        paymentIntentClientSecret,
         amount,
         currency,
         metadata?.map((k, v) => MapEntry(k, v)),
@@ -403,26 +361,6 @@ class _$TerminalPlatform implements TerminalPlatform {
         refundApplicationFee,
         customerCancellationEnabled
       ]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> stopCollectRefundPaymentMethod(int operationId) async {
-    try {
-      await _$channel.invokeMethod('stopCollectRefundPaymentMethod', [operationId]);
-    } on PlatformException catch (exception) {
-      TerminalPlatform._throwIfIsHostException(exception);
-      rethrow;
-    }
-  }
-
-  @override
-  Future<Refund> startConfirmRefund(int operationId) async {
-    try {
-      final result = await _$channel.invokeMethod('startConfirmRefund', [operationId]);
       return _$deserializeRefund(result as List);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
@@ -431,9 +369,9 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> stopConfirmRefund(int operationId) async {
+  Future<void> stopProcessRefund(int operationId) async {
     try {
-      await _$channel.invokeMethod('stopConfirmRefund', [operationId]);
+      await _$channel.invokeMethod('stopProcessRefund', [operationId]);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
       rethrow;
@@ -465,6 +403,31 @@ class _$TerminalPlatform implements TerminalPlatform {
     try {
       await _$channel.invokeMethod(
           'setTapToPayUXConfiguration', [_$serializeTapToPayUxConfiguration(configuration)]);
+    } on PlatformException catch (exception) {
+      TerminalPlatform._throwIfIsHostException(exception);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Reader> startEasyConnect({
+    required int operationId,
+    required EasyConnectConfiguration configuration,
+  }) async {
+    try {
+      final result = await _$channel.invokeMethod(
+          'startEasyConnect', [operationId, _$serializeEasyConnectConfiguration(configuration)]);
+      return _$deserializeReader(result as List);
+    } on PlatformException catch (exception) {
+      TerminalPlatform._throwIfIsHostException(exception);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> stopEasyConnect(int operationId) async {
+    try {
+      await _$channel.invokeMethod('stopEasyConnect', [operationId]);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
       rethrow;
@@ -571,10 +534,17 @@ Charge _$deserializeCharge(List<Object?> serialized) => Charge(
         serialized[7] != null ? _$deserializePaymentMethodDetails(serialized[7] as List) : null,
     statementDescriptorSuffix: serialized[8] as String?,
     status: ChargeStatus.values[serialized[9] as int]);
+List<Object?> _$serializeConfirmPaymentIntentConfiguration(
+        ConfirmPaymentIntentConfiguration deserialized) =>
+    [
+      deserialized.returnUrl,
+    ];
 List<Object?> _$serializeConnectionConfiguration(ConnectionConfiguration deserialized) =>
     switch (deserialized) {
       BluetoothConnectionConfiguration() =>
         _$serializeBluetoothConnectionConfiguration(deserialized),
+      AppsOnDevicesConnectionConfiguration() =>
+        _$serializeAppsOnDevicesConnectionConfiguration(deserialized),
       HandoffConnectionConfiguration() => _$serializeHandoffConnectionConfiguration(deserialized),
       InternetConnectionConfiguration() => _$serializeInternetConnectionConfiguration(deserialized),
       TapToPayConnectionConfiguration() => _$serializeTapToPayConnectionConfiguration(deserialized),
@@ -587,6 +557,9 @@ List<Object?> _$serializeBluetoothConnectionConfiguration(
       deserialized.autoReconnectOnUnexpectedDisconnect,
       deserialized.locationId
     ];
+List<Object?> _$serializeAppsOnDevicesConnectionConfiguration(
+        AppsOnDevicesConnectionConfiguration deserialized) =>
+    ['AppsOnDevicesConnectionConfiguration'];
 List<Object?> _$serializeHandoffConnectionConfiguration(
         HandoffConnectionConfiguration deserialized) =>
     ['HandoffConnectionConfiguration'];
@@ -614,6 +587,8 @@ List<Object?> _$serializeDiscoveryConfiguration(DiscoveryConfiguration deseriali
       BluetoothDiscoveryConfiguration() => _$serializeBluetoothDiscoveryConfiguration(deserialized),
       BluetoothProximityDiscoveryConfiguration() =>
         _$serializeBluetoothProximityDiscoveryConfiguration(deserialized),
+      AppsOnDevicesDiscoveryConfiguration() =>
+        _$serializeAppsOnDevicesDiscoveryConfiguration(deserialized),
       HandoffDiscoveryConfiguration() => _$serializeHandoffDiscoveryConfiguration(deserialized),
       InternetDiscoveryConfiguration() => _$serializeInternetDiscoveryConfiguration(deserialized),
       TapToPayDiscoveryConfiguration() => _$serializeTapToPayDiscoveryConfiguration(deserialized),
@@ -629,6 +604,9 @@ List<Object?> _$serializeBluetoothDiscoveryConfiguration(
 List<Object?> _$serializeBluetoothProximityDiscoveryConfiguration(
         BluetoothProximityDiscoveryConfiguration deserialized) =>
     ['BluetoothProximityDiscoveryConfiguration', deserialized.isSimulated];
+List<Object?> _$serializeAppsOnDevicesDiscoveryConfiguration(
+        AppsOnDevicesDiscoveryConfiguration deserialized) =>
+    ['AppsOnDevicesDiscoveryConfiguration'];
 List<Object?> _$serializeHandoffDiscoveryConfiguration(
         HandoffDiscoveryConfiguration deserialized) =>
     ['HandoffDiscoveryConfiguration'];
@@ -636,6 +614,9 @@ List<Object?> _$serializeInternetDiscoveryConfiguration(
         InternetDiscoveryConfiguration deserialized) =>
     [
       'InternetDiscoveryConfiguration',
+      deserialized.discoveryFilter != null
+          ? _$serializeDiscoveryFilter(deserialized.discoveryFilter!)
+          : null,
       deserialized.isSimulated,
       deserialized.locationId,
       deserialized.timeout?.inMicroseconds
@@ -645,6 +626,45 @@ List<Object?> _$serializeTapToPayDiscoveryConfiguration(
     ['TapToPayDiscoveryConfiguration', deserialized.isSimulated];
 List<Object?> _$serializeUsbDiscoveryConfiguration(UsbDiscoveryConfiguration deserialized) =>
     ['UsbDiscoveryConfiguration', deserialized.isSimulated, deserialized.timeout?.inMicroseconds];
+List<Object?> _$serializeDiscoveryFilter(DiscoveryFilter deserialized) => switch (deserialized) {
+      DiscoveryFilterByReaderId() => _$serializeDiscoveryFilterByReaderId(deserialized),
+      DiscoveryFilterBySerialNumber() => _$serializeDiscoveryFilterBySerialNumber(deserialized),
+    };
+List<Object?> _$serializeDiscoveryFilterByReaderId(DiscoveryFilterByReaderId deserialized) =>
+    ['DiscoveryFilterByReaderId', deserialized.readerId];
+List<Object?> _$serializeDiscoveryFilterBySerialNumber(
+        DiscoveryFilterBySerialNumber deserialized) =>
+    ['DiscoveryFilterBySerialNumber', deserialized.serialNumber];
+List<Object?> _$serializeEasyConnectConfiguration(EasyConnectConfiguration deserialized) =>
+    switch (deserialized) {
+      InternetEasyConnectConfiguration() =>
+        _$serializeInternetEasyConnectConfiguration(deserialized),
+      AppsOnDevicesEasyConnectionConfiguration() =>
+        _$serializeAppsOnDevicesEasyConnectionConfiguration(deserialized),
+      TapToPayEasyConnectConfiguration() =>
+        _$serializeTapToPayEasyConnectConfiguration(deserialized),
+    };
+List<Object?> _$serializeInternetEasyConnectConfiguration(
+        InternetEasyConnectConfiguration deserialized) =>
+    [
+      'InternetEasyConnectConfiguration',
+      _$serializeInternetConnectionConfiguration(deserialized.connectionConfiguration),
+      _$serializeInternetDiscoveryConfiguration(deserialized.discoveryConfiguration)
+    ];
+List<Object?> _$serializeAppsOnDevicesEasyConnectionConfiguration(
+        AppsOnDevicesEasyConnectionConfiguration deserialized) =>
+    [
+      'AppsOnDevicesEasyConnectionConfiguration',
+      _$serializeAppsOnDevicesConnectionConfiguration(deserialized.connectionConfiguration),
+      _$serializeAppsOnDevicesDiscoveryConfiguration(deserialized.discoveryConfiguration)
+    ];
+List<Object?> _$serializeTapToPayEasyConnectConfiguration(
+        TapToPayEasyConnectConfiguration deserialized) =>
+    [
+      'TapToPayEasyConnectConfiguration',
+      _$serializeTapToPayConnectionConfiguration(deserialized.connectionConfiguration),
+      _$serializeTapToPayDiscoveryConfiguration(deserialized.discoveryConfiguration)
+    ];
 Location _$deserializeLocation(List<Object?> serialized) => Location(
     address: serialized[0] != null ? _$deserializeAddress(serialized[0] as List) : null,
     displayName: serialized[1] as String?,
@@ -740,12 +760,15 @@ Reader _$deserializeReader(List<Object?> serialized) => Reader(
 List<Object?> _$serializeReaderDelegateAbstract(ReaderDelegateAbstract deserialized) =>
     switch (deserialized) {
       MobileReaderDelegate() => _$serializeMobileReaderDelegate(deserialized),
+      AppsOnDevicesReaderDelegate() => _$serializeAppsOnDevicesReaderDelegate(deserialized),
       HandoffReaderDelegate() => _$serializeHandoffReaderDelegate(deserialized),
       InternetReaderDelegate() => _$serializeInternetReaderDelegate(deserialized),
       TapToPayReaderDelegate() => _$serializeTapToPayReaderDelegate(deserialized),
     };
 List<Object?> _$serializeMobileReaderDelegate(MobileReaderDelegate deserialized) =>
     ['MobileReaderDelegate'];
+List<Object?> _$serializeAppsOnDevicesReaderDelegate(AppsOnDevicesReaderDelegate deserialized) =>
+    ['AppsOnDevicesReaderDelegate'];
 List<Object?> _$serializeHandoffReaderDelegate(HandoffReaderDelegate deserialized) =>
     ['HandoffReaderDelegate'];
 List<Object?> _$serializeInternetReaderDelegate(InternetReaderDelegate deserialized) =>

@@ -9,6 +9,8 @@ export 'src/models/charge.dart';
 export 'src/models/connection_configuration.dart';
 export 'src/models/disconnect_reason.dart';
 export 'src/models/discovery_configuration.dart';
+export 'src/models/discovery_filter.dart';
+export 'src/models/easy_connect_configuration.dart';
 export 'src/models/location.dart';
 export 'src/models/payment.dart';
 export 'src/models/payment_intent.dart';
