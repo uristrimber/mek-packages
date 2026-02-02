@@ -68,6 +68,7 @@ class AppsOnDevicesDiscoveryConfiguration extends DiscoveryConfiguration {
 /// ONLY ON ANDROID
 @Deprecated('Use AppsOnDevicesDiscoveryConfiguration')
 class HandoffDiscoveryConfiguration extends AppsOnDevicesDiscoveryConfiguration {
+  @Deprecated('Use AppsOnDevicesDiscoveryConfiguration')
   const HandoffDiscoveryConfiguration();
 }
 

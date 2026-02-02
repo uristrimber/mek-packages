@@ -10,7 +10,6 @@ import com.stripe.stripeterminal.external.callable.PaymentIntentCallback
 import com.stripe.stripeterminal.external.callable.ReaderCallback
 import com.stripe.stripeterminal.external.callable.RefundCallback
 import com.stripe.stripeterminal.external.callable.SetupIntentCallback
-import com.stripe.stripeterminal.external.models.AllowRedisplay
 import com.stripe.stripeterminal.external.models.CollectPaymentIntentConfiguration
 import com.stripe.stripeterminal.external.models.CollectRefundConfiguration
 import com.stripe.stripeterminal.external.models.CollectSetupIntentConfiguration
@@ -26,7 +25,6 @@ import com.stripe.stripeterminal.external.models.RefundParameters
 import com.stripe.stripeterminal.external.models.SetupIntent
 import com.stripe.stripeterminal.external.models.SetupIntentCancellationParameters
 import com.stripe.stripeterminal.external.models.SetupIntentParameters
-import com.stripe.stripeterminal.external.models.Surcharge
 import com.stripe.stripeterminal.external.models.TerminalException
 import com.stripe.stripeterminal.log.LogLevel
 import io.flutter.embedding.engine.plugins.FlutterPlugin

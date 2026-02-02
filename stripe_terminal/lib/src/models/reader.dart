@@ -63,8 +63,6 @@ class Reader with _$Reader {
 
   final Location? location;
 
-  // TODO: Add location field
-
   /// The reader’s serial number.
   final String serialNumber;
 

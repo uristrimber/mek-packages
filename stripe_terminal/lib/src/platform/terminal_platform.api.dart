@@ -545,7 +545,6 @@ List<Object?> _$serializeConnectionConfiguration(ConnectionConfiguration deseria
         _$serializeBluetoothConnectionConfiguration(deserialized),
       AppsOnDevicesConnectionConfiguration() =>
         _$serializeAppsOnDevicesConnectionConfiguration(deserialized),
-      HandoffConnectionConfiguration() => _$serializeHandoffConnectionConfiguration(deserialized),
       InternetConnectionConfiguration() => _$serializeInternetConnectionConfiguration(deserialized),
       TapToPayConnectionConfiguration() => _$serializeTapToPayConnectionConfiguration(deserialized),
       UsbConnectionConfiguration() => _$serializeUsbConnectionConfiguration(deserialized),
@@ -560,9 +559,6 @@ List<Object?> _$serializeBluetoothConnectionConfiguration(
 List<Object?> _$serializeAppsOnDevicesConnectionConfiguration(
         AppsOnDevicesConnectionConfiguration deserialized) =>
     ['AppsOnDevicesConnectionConfiguration'];
-List<Object?> _$serializeHandoffConnectionConfiguration(
-        HandoffConnectionConfiguration deserialized) =>
-    ['HandoffConnectionConfiguration'];
 List<Object?> _$serializeInternetConnectionConfiguration(
         InternetConnectionConfiguration deserialized) =>
     ['InternetConnectionConfiguration', deserialized.allowCustomerCancel, deserialized.failIfInUse];
@@ -589,7 +585,6 @@ List<Object?> _$serializeDiscoveryConfiguration(DiscoveryConfiguration deseriali
         _$serializeBluetoothProximityDiscoveryConfiguration(deserialized),
       AppsOnDevicesDiscoveryConfiguration() =>
         _$serializeAppsOnDevicesDiscoveryConfiguration(deserialized),
-      HandoffDiscoveryConfiguration() => _$serializeHandoffDiscoveryConfiguration(deserialized),
       InternetDiscoveryConfiguration() => _$serializeInternetDiscoveryConfiguration(deserialized),
       TapToPayDiscoveryConfiguration() => _$serializeTapToPayDiscoveryConfiguration(deserialized),
       UsbDiscoveryConfiguration() => _$serializeUsbDiscoveryConfiguration(deserialized),
@@ -607,9 +602,6 @@ List<Object?> _$serializeBluetoothProximityDiscoveryConfiguration(
 List<Object?> _$serializeAppsOnDevicesDiscoveryConfiguration(
         AppsOnDevicesDiscoveryConfiguration deserialized) =>
     ['AppsOnDevicesDiscoveryConfiguration'];
-List<Object?> _$serializeHandoffDiscoveryConfiguration(
-        HandoffDiscoveryConfiguration deserialized) =>
-    ['HandoffDiscoveryConfiguration'];
 List<Object?> _$serializeInternetDiscoveryConfiguration(
         InternetDiscoveryConfiguration deserialized) =>
     [
@@ -761,7 +753,6 @@ List<Object?> _$serializeReaderDelegateAbstract(ReaderDelegateAbstract deseriali
     switch (deserialized) {
       MobileReaderDelegate() => _$serializeMobileReaderDelegate(deserialized),
       AppsOnDevicesReaderDelegate() => _$serializeAppsOnDevicesReaderDelegate(deserialized),
-      HandoffReaderDelegate() => _$serializeHandoffReaderDelegate(deserialized),
       InternetReaderDelegate() => _$serializeInternetReaderDelegate(deserialized),
       TapToPayReaderDelegate() => _$serializeTapToPayReaderDelegate(deserialized),
     };
@@ -769,8 +760,6 @@ List<Object?> _$serializeMobileReaderDelegate(MobileReaderDelegate deserialized)
     ['MobileReaderDelegate'];
 List<Object?> _$serializeAppsOnDevicesReaderDelegate(AppsOnDevicesReaderDelegate deserialized) =>
     ['AppsOnDevicesReaderDelegate'];
-List<Object?> _$serializeHandoffReaderDelegate(HandoffReaderDelegate deserialized) =>
-    ['HandoffReaderDelegate'];
 List<Object?> _$serializeInternetReaderDelegate(InternetReaderDelegate deserialized) =>
     ['InternetReaderDelegate'];
 List<Object?> _$serializeTapToPayReaderDelegate(TapToPayReaderDelegate deserialized) =>

@@ -33,13 +33,17 @@ class AppsOnDevicesConnectionConfiguration extends ConnectionConfiguration {
 
 @Deprecated('Use AppsOnDevicesConnectionConfiguration')
 class HandoffConnectionConfiguration extends AppsOnDevicesConnectionConfiguration {
-  @override
   @SerializableParam.ignore()
-  final HandoffReaderDelegate? readerDelegate;
+  final HandoffReaderDelegate? _handoffReaderDelegate;
 
+  @override
+  HandoffReaderDelegate? get readerDelegate => _handoffReaderDelegate;
+
+  @Deprecated('Use AppsOnDevicesConnectionConfiguration')
   const HandoffConnectionConfiguration({
-    required this.readerDelegate,
-  }) : super(readerDelegate: readerDelegate);
+    required HandoffReaderDelegate? readerDelegate,
+  })  : _handoffReaderDelegate = readerDelegate,
+        super(readerDelegate: readerDelegate);
 }
 
 class InternetConnectionConfiguration extends ConnectionConfiguration {

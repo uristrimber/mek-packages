@@ -164,7 +164,7 @@ class _ReadersScreenState extends ConsumerState<ReadersScreen> with StateTools {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: DropdownButtonFormField<DiscoveryMethod>(
-                value: _discoveryMethod,
+                initialValue: _discoveryMethod,
                 onChanged: !isMutating && connectionStatus == ConnectionStatus.notConnected
                     ? _changeDiscoveryMethod
                     : null,

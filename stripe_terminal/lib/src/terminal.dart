@@ -17,7 +17,6 @@ import 'package:mek_stripe_terminal/src/models/simultator_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/tap_to_pay_ux_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/tip.dart';
 import 'package:mek_stripe_terminal/src/platform/terminal_platform.dart';
-import 'package:mek_stripe_terminal/src/terminal_exception.dart';
 
 /// Parts documented with "???" are not yet validated
 class Terminal {

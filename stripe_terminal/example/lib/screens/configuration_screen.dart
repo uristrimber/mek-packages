@@ -60,7 +60,7 @@ class _PaymentsScreenState extends ConsumerState<ConfigurationScreen> with State
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DropdownButtonFormField<TapToPayUxConfigurationTapZoneIndicator>(
-          value: _indicator,
+          initialValue: _indicator,
           decoration: const InputDecoration(labelText: 'Tap Zone Indicator'),
           items: TapToPayUxConfigurationTapZoneIndicator.values
               .map((e) => DropdownMenuItem(value: e, child: Text(e.toString().split('.').last)))
@@ -103,7 +103,7 @@ class _PaymentsScreenState extends ConsumerState<ConfigurationScreen> with State
           onColorChanged: (color) => setState(() => _errorColor = color),
         ),
         DropdownButtonFormField<TapToPayUxConfigurationDarkMode>(
-          value: _darkMode,
+          initialValue: _darkMode,
           decoration: const InputDecoration(labelText: 'Dark Mode'),
           items: TapToPayUxConfigurationDarkMode.values
               .map((e) => DropdownMenuItem(value: e, child: Text(e.toString().split('.').last)))
