@@ -1063,8 +1063,10 @@ data class InternetEasyConnectConfigurationApi(
             serialized: List<Any?>,
         ): InternetEasyConnectConfigurationApi {
             return InternetEasyConnectConfigurationApi(
-                connectionConfiguration = (serialized[0] as List<Any?>).let { InternetConnectionConfigurationApi.deserialize(it) },
-                discoveryConfiguration = (serialized[1] as List<Any?>).let { InternetDiscoveryConfigurationApi.deserialize(it) },
+                connectionConfiguration = (serialized[0] as List<Any?>).let { ConnectionConfigurationApi.deserialize(it) }
+                    as InternetConnectionConfigurationApi,
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { DiscoveryConfigurationApi.deserialize(it) }
+                    as InternetDiscoveryConfigurationApi,
             )
         }
     }
@@ -1079,8 +1081,10 @@ data class AppsOnDevicesEasyConnectionConfigurationApi(
             serialized: List<Any?>,
         ): AppsOnDevicesEasyConnectionConfigurationApi {
             return AppsOnDevicesEasyConnectionConfigurationApi(
-                connectionConfiguration = (serialized[0] as List<Any?>).let { AppsOnDevicesConnectionConfigurationApi.deserialize(it) },
-                discoveryConfiguration = (serialized[1] as List<Any?>).let { AppsOnDevicesDiscoveryConfigurationApi.deserialize(it) },
+                connectionConfiguration = (serialized[0] as List<Any?>).let { ConnectionConfigurationApi.deserialize(it) }
+                    as AppsOnDevicesConnectionConfigurationApi,
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { DiscoveryConfigurationApi.deserialize(it) }
+                    as AppsOnDevicesDiscoveryConfigurationApi,
             )
         }
     }
@@ -1095,8 +1099,10 @@ data class TapToPayEasyConnectConfigurationApi(
             serialized: List<Any?>,
         ): TapToPayEasyConnectConfigurationApi {
             return TapToPayEasyConnectConfigurationApi(
-                connectionConfiguration = (serialized[0] as List<Any?>).let { TapToPayConnectionConfigurationApi.deserialize(it) },
-                discoveryConfiguration = (serialized[1] as List<Any?>).let { TapToPayDiscoveryConfigurationApi.deserialize(it) },
+                connectionConfiguration = (serialized[0] as List<Any?>).let { ConnectionConfigurationApi.deserialize(it) }
+                    as TapToPayConnectionConfigurationApi,
+                discoveryConfiguration = (serialized[1] as List<Any?>).let { DiscoveryConfigurationApi.deserialize(it) }
+                    as TapToPayDiscoveryConfigurationApi,
             )
         }
     }
