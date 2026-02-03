@@ -35,9 +35,10 @@ class _$TerminalPlatform implements TerminalPlatform {
   }
 
   @override
-  Future<void> clearCachedCredentials() async {
+  Future<ClearCachedCredentialsResult> clearCachedCredentials() async {
     try {
-      await _$channel.invokeMethod('clearCachedCredentials', []);
+      final result = await _$channel.invokeMethod('clearCachedCredentials', []);
+      return _$deserializeClearCachedCredentialsResult(result as List);
     } on PlatformException catch (exception) {
       TerminalPlatform._throwIfIsHostException(exception);
       rethrow;
@@ -482,6 +483,12 @@ Address _$deserializeAddress(List<Object?> serialized) => Address(
     line2: serialized[3] as String?,
     postalCode: serialized[4] as String?,
     state: serialized[5] as String?);
+ClearCachedCredentialsResult _$deserializeClearCachedCredentialsResult(List<Object?> serialized) =>
+    ClearCachedCredentialsResult(
+        isSuccessful: serialized[0] as bool,
+        error: serialized[1] != null
+            ? _$deserializeTerminalException(serialized[1] as List)
+            : null);
 AmountDetails _$deserializeAmountDetails(List<Object?> serialized) =>
     AmountDetails(tip: serialized[0] != null ? _$deserializeTip(serialized[0] as List) : null);
 CardDetails _$deserializeCardDetails(List<Object?> serialized) => CardDetails(

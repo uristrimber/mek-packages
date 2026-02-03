@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:mek_stripe_terminal/src/cancellable_future.dart';
 import 'package:mek_stripe_terminal/src/models/cart.dart';
+import 'package:mek_stripe_terminal/src/models/clear_cached_credentials_result.dart';
 import 'package:mek_stripe_terminal/src/models/connection_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/discovery_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/easy_connect_configuration.dart';
@@ -64,6 +65,9 @@ class Terminal {
   /// You can use this method to switch accounts in your app, e.g. to switch between live and test
   /// Stripe API keys on your backend.
   ///
+  /// A reader must not be connected when this method is called. If a reader is connected, the
+  /// operation will fail with an [TerminalExceptionCode.unexpectedOperation] error.
+  ///
   /// In order to switch accounts in your app:
   /// - if a reader is connected, call [disconnectReader]
   /// - call [clearCachedCredentials]
@@ -77,10 +81,13 @@ class Terminal {
   ///   create a reader session.
   /// - Subsequent calls to [connectReader] require a new connection token. If you disconnect from a
   ///   reader, and then call [connectReader] again, the SDK will fetch another connection token.
-  Future<void> clearCachedCredentials() async {
-    await _platform.clearCachedCredentials();
-    _handlers.handleReaderDisconnection();
-    _controller = null;
+  Future<ClearCachedCredentialsResult> clearCachedCredentials() async {
+    final result = await _platform.clearCachedCredentials();
+    if (result.isSuccessful) {
+      _handlers.handleReaderDisconnection();
+      _controller = null;
+    }
+    return result;
   }
 
 //region Reader discovery, connection and updates

@@ -58,7 +58,7 @@ interface TerminalPlatformApi {
         shouldPrintLogs: Boolean,
     )
 
-    fun onClearCachedCredentials()
+    fun onClearCachedCredentials(): ClearCachedCredentialsResultApi
 
     fun onGetConnectionStatus(): ConnectionStatusApi
 
@@ -233,8 +233,8 @@ interface TerminalPlatformApi {
                     result.success(null)
                 }
                 "clearCachedCredentials" -> {
-                    onClearCachedCredentials()
-                    result.success(null)
+                    val res = onClearCachedCredentials()
+                    result.success(res.serialize())
                 }
                 "getConnectionStatus" -> {
                     val res = onGetConnectionStatus()
@@ -550,6 +550,18 @@ data class AmountDetailsApi(
     fun serialize(): List<Any?> {
         return listOf(
             tip?.serialize(),
+        )
+    }
+}
+
+data class ClearCachedCredentialsResultApi(
+    val isSuccessful: Boolean,
+    val error: TerminalExceptionApi?,
+) {
+    fun serialize(): List<Any?> {
+        return listOf(
+            isSuccessful,
+            error?.serialize(),
         )
     }
 }

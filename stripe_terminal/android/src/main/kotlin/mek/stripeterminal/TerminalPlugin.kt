@@ -32,6 +32,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import mek.stripeterminal.api.AllowRedisplayApi
 import mek.stripeterminal.api.CartApi
+import mek.stripeterminal.api.ClearCachedCredentialsResultApi
 import mek.stripeterminal.api.ConfirmPaymentIntentConfigurationApi
 import mek.stripeterminal.api.ConnectionConfigurationApi
 import mek.stripeterminal.api.ConnectionStatusApi
@@ -125,9 +126,15 @@ class TerminalPlatformPlugin(
         )
     }
 
-    override fun onClearCachedCredentials() {
-        terminal.clearCachedCredentials()
-        clean()
+    override fun onClearCachedCredentials(): ClearCachedCredentialsResultApi {
+        val result = terminal.clearCachedCredentials()
+        if (result.isSuccessful) {
+            clean()
+        }
+        return ClearCachedCredentialsResultApi(
+            isSuccessful = result.isSuccessful,
+            error = result.error?.toApi(),
+        )
     }
 
     // region Reader discovery, connection and updates
