@@ -57,7 +57,6 @@ fun Reader.toApi(): ReaderApi {
         location = location?.toApi(),
         label = label,
         serialNumber = serialNumber!!,
-        deviceSoftwareVersion = softwareVersion,
         ipAddress = ipAddress,
         networkStatus = networkStatus?.toApi()
     )
@@ -101,10 +100,6 @@ fun DeviceType.toApi(): DeviceTypeApi? {
         DeviceType.VERIFONE_UX700_DEVKIT -> DeviceTypeApi.VERIFONE_UX700_DEVKIT
         DeviceType.VERIFONE_VM100 -> DeviceTypeApi.VERIFONE_VM100
         DeviceType.VERIFONE_VP100 -> DeviceTypeApi.VERIFONE_VP100
-        DeviceType.STRIPE_U200 -> DeviceTypeApi.STRIPE_U200
-        DeviceType.VERIFONE_VM110 -> DeviceTypeApi.VERIFONE_VM110
-        DeviceType.VERIFONE_VP110 -> DeviceTypeApi.VERIFONE_VP110
-        DeviceType.VERIFONE_VL110 -> DeviceTypeApi.VERIFONE_VL110
         DeviceType.UNKNOWN -> null
     }
 }
@@ -284,10 +279,6 @@ fun DeviceTypeApi.toHost(): DeviceType? {
         DeviceTypeApi.VERIFONE_UX700_DEVKIT -> DeviceType.VERIFONE_UX700_DEVKIT
         DeviceTypeApi.VERIFONE_VM100 -> DeviceType.VERIFONE_VM100
         DeviceTypeApi.VERIFONE_VP100 -> DeviceType.VERIFONE_VP100
-        DeviceTypeApi.STRIPE_U200 -> DeviceType.STRIPE_U200
-        DeviceTypeApi.VERIFONE_VM110 -> DeviceType.VERIFONE_VM110
-        DeviceTypeApi.VERIFONE_VP110 -> DeviceType.VERIFONE_VP110
-        DeviceTypeApi.VERIFONE_VL110 -> DeviceType.VERIFONE_VL110
         DeviceTypeApi.VERIFONE_P400 -> null
     }
 }
