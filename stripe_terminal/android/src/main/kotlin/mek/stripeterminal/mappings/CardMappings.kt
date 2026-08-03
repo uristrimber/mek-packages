@@ -40,6 +40,10 @@ fun cardBrandToApi(value: String?): CardBrandApi? {
         "mastercard" -> CardBrandApi.MASTER_CARD
         "unionpay" -> CardBrandApi.UNION_PAY
         "visa" -> CardBrandApi.VISA
+        "interac" -> CardBrandApi.INTERAC
+        "eftpos_au" -> CardBrandApi.EFTPOS_AU
+        // Brands the Stripe SDK knows (girocard, cartes_bancaires) but CardBrandApi
+        // doesn't, plus "unknown". Callers must treat null as "brand unavailable".
         "unknown" -> null
         else -> null
     }
@@ -77,7 +81,11 @@ fun ReceiptDetails.toApi(): ReceiptDetailsApi {
         accountType = accountType,
         applicationPreferredName = applicationPreferredName,
         authorizationCode = authorizationCode,
-        authorizationResponseCode = authorizationResponseCode!!,
+        // Nullable on the Stripe model but non-null in ReceiptDetailsApi. Force
+        // unwrapping threw a NullPointerException from inside the plugin's own
+        // success callback, which the SDK then reported as the misleading
+        // unexpectedSdkError "Unknown error retrieving payment intent from API".
+        authorizationResponseCode = authorizationResponseCode ?: "",
         applicationCryptogram = applicationCryptogram,
         dedicatedFileName = dedicatedFileName,
         transactionStatusInformation = tsi,
@@ -87,8 +95,11 @@ fun ReceiptDetails.toApi(): ReceiptDetailsApi {
 
 fun CardNetworks.toApi(): CardNetworksApi {
     return CardNetworksApi(
+        // `available` is a raw List<String> straight from the API, so it can hold
+        // brands CardBrandApi has no value for. Drop those instead of force
+        // unwrapping cardBrandToApi, which crashed the whole PaymentIntent mapping.
         available =
-        available.map { cardBrandToApi(it)!! },
+        available.mapNotNull { cardBrandToApi(it) },
         preferred = preferred
     )
 }
