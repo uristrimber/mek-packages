@@ -1,3 +1,7 @@
+
+## 1.1.0
+- chore: added utils method `$readBodyAsString` for generated file
+
 ## 1.0.0
 - build: bumped dart sdk version to `^3.8.0`
 - build(generator): required analyzer `>=7.4.0 <9.0.0`

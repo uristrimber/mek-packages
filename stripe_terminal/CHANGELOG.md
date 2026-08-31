@@ -1,6 +1,7 @@
-## 5.1.1
+## 5.6.0
 
-- feat: bump Android and iOS Stripe Terminal SDKs to `5.1.1`
+- chore!: renamed `Terminal.initTerminal` to `Terminal.init`
+- feat: bump Android and iOS Stripe Terminal SDKs to `5.6.0`
 - feat: add support for `ConnectionStatus.reconnecting` and new reader device types
 - feat: add support for `DisconnectReason.bluetoothPeerRemovedPairingInformation`
 - change: customer cancellation is enabled by default in collect flows to match SDK defaults

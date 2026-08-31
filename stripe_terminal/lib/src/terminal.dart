@@ -23,8 +23,10 @@ import 'package:mek_stripe_terminal/src/platform/terminal_platform.dart';
 class Terminal {
   static Terminal? _instance;
   static Terminal get instance {
-    assert(_instance != null,
-        'Please before use a Terminal instance init it with [Terminal.initTerminal] static method');
+    assert(
+      _instance != null,
+      'Please before use a Terminal instance init it with [Terminal.initTerminal] static method',
+    );
     return _instance!;
   }
 
@@ -36,7 +38,7 @@ class Terminal {
   static bool get isInitialized => _instance != null;
 
   /// Initializes the terminal SDK
-  static Future<void> initTerminal({
+  static Future<void> init({
     bool shouldPrintLogs = false,
 
     /// A callback function that returns a Future which resolves to a connection token from your backend
@@ -44,8 +46,10 @@ class Terminal {
     required Future<String> Function() fetchToken,
   }) async {
     if (_instance != null) {
-      throw StateError('Already initialized!\n'
-          'Retrieve it with [Terminal.instance] static getter or use [Terminal.clearCachedCredentials] method to re-fetch the token.');
+      throw StateError(
+        'Already initialized!\n'
+        'Retrieve it with [Terminal.instance] static getter or use [Terminal.clearCachedCredentials] method to re-fetch the token.',
+      );
     }
     if (_handlers.fetchToken != null) {
       throw StateError('Already initializing!\nWait a initialization!');
@@ -90,7 +94,7 @@ class Terminal {
     return result;
   }
 
-//region Reader discovery, connection and updates
+  //region Reader discovery, connection and updates
   /// The currently connected reader’s connectionStatus changed.
   ///
   /// You should not use this stream to detect when a reader unexpectedly disconnects from your app,
@@ -154,10 +158,7 @@ class Terminal {
   /// Discovers and connects to a reader in a single call.
   CancelableFuture<Reader> easyConnect(EasyConnectConfiguration configuration) {
     return CancelableFuture(_platform.stopEasyConnect, (id) async {
-      return await _platform.startEasyConnect(
-        operationId: id,
-        configuration: configuration,
-      );
+      return await _platform.startEasyConnect(operationId: id, configuration: configuration);
     });
   }
 
@@ -240,9 +241,9 @@ class Terminal {
   /// with a simulated reader.
   Future<void> setSimulatorConfiguration(SimulatorConfiguration configuration) async =>
       await _platform.setSimulatorConfiguration(configuration);
-//endregion
+  //endregion
 
-//region Taking payments
+  //region Taking payments
   /// The currently connected reader’s [PaymentStatus] changed.
   Stream<PaymentStatus> get onPaymentStatusChange => _handlers.paymentStatusChangeStream;
 
@@ -303,9 +304,9 @@ class Terminal {
   /// Note: This cannot be used with the Verifone P400 reader.
   Future<void> cancelPaymentIntent(PaymentIntent paymentIntent) async =>
       await _platform.cancelPaymentIntent(paymentIntent.id);
-//endregion
+  //endregion
 
-//region Saving payment details for later use
+  //region Saving payment details for later use
 
   /// Creates a new [SetupIntent] with the given parameters.
   ///
@@ -362,9 +363,9 @@ class Terminal {
   Future<SetupIntent> cancelSetupIntent(SetupIntent setupIntent) async =>
       await _platform.cancelSetupIntent(setupIntent.id);
 
-//endregion
+  //endregion
 
-//region Card-present refunds
+  //region Card-present refunds
 
   /// Processes an in-person refund by collecting the payment method and confirming it.
   ///
@@ -419,9 +420,9 @@ class Terminal {
       );
     });
   }
-//endregion
+  //endregion
 
-//region Display information to customers
+  //region Display information to customers
   /// Updates the reader display with transaction information. This method is for display purposes
   /// only and has no correlation with what the customer is actually charged. Tax and total
   /// are also not automatically calculated and must be set in [Cart].
@@ -437,7 +438,7 @@ class Terminal {
   /// Configure Tap to Pay UX
   Future<void> setTapToPayUXConfiguration(TapToPayUxConfiguration configuration) async =>
       await _platform.setTapToPayUXConfiguration(configuration);
-//endregion
+  //endregion
 
   StreamController<T> _handleStream<T>(
     StreamController<T>? oldController,
@@ -463,9 +464,7 @@ class Terminal {
     String? paymentIntentClientSecret,
   }) {
     if (chargeId == null && paymentIntentId == null) {
-      throw ArgumentError(
-        'Either chargeId or paymentIntentId must be provided to refund.',
-      );
+      throw ArgumentError('Either chargeId or paymentIntentId must be provided to refund.');
     }
     if (paymentIntentId != null && paymentIntentClientSecret == null) {
       throw ArgumentError(

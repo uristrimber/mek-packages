@@ -21,12 +21,12 @@ Router _$QueryParametersControllerRouter(QueryParametersController service) => R
       string: $parseQueryParameters(request, 'string', (vls) => vls.single),
       stringOrNull: $parseQueryParameters(
         request,
-        'string-or-null',
+        'stringOrNull',
         (vls) => vls.isNotEmpty ? vls.single : null,
       ),
       customParser: $parseQueryParameters(
         request,
-        'custom-parser',
+        'customParser',
         (vls) => vls.isNotEmpty ? DateTime.parse(vls.single) : null,
       ),
     );
@@ -34,15 +34,15 @@ Router _$QueryParametersControllerRouter(QueryParametersController service) => R
   ..add('GET', '/list', (Request request) async {
     return service.list(
       request,
-      stringList: $parseQueryParameters(request, 'string-list', (vls) => vls),
+      stringList: $parseQueryParameters(request, 'stringList', (vls) => vls),
       integerList: $parseQueryParameters(
         request,
-        'integer-list',
+        'integerList',
         (vls) => vls.map(int.parse).toList(),
       ),
       customParserList: $parseQueryParameters(
         request,
-        'custom-parser-list',
+        'customParserList',
         (vls) => vls.map(DateTime.parse).toList(),
       ),
     );

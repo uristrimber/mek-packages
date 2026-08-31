@@ -1257,7 +1257,7 @@ struct PaymentMethodOptionsParametersApi {
 enum PaymentMethodTypeApi: Int {
     case cardPresent
     case card
-    case interactPresent
+    case interacPresent
 }
 
 enum PaymentStatusApi: Int {
@@ -1270,6 +1270,7 @@ enum PaymentStatusApi: Int {
 struct ReaderApi {
     let availableUpdate: Bool
     let batteryLevel: Double
+    let deviceSoftwareVersion: String?
     let deviceType: DeviceTypeApi?
     let id: String?
     let ipAddress: String?
@@ -1285,6 +1286,7 @@ struct ReaderApi {
         return [
             availableUpdate,
             batteryLevel,
+            deviceSoftwareVersion,
             deviceType?.rawValue,
             id,
             ipAddress,

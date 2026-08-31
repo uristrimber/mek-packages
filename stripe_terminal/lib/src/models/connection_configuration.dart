@@ -26,9 +26,7 @@ class AppsOnDevicesConnectionConfiguration extends ConnectionConfiguration {
   @SerializableParam.ignore()
   final AppsOnDevicesReaderDelegate? readerDelegate;
 
-  const AppsOnDevicesConnectionConfiguration({
-    required this.readerDelegate,
-  });
+  const AppsOnDevicesConnectionConfiguration({required this.readerDelegate});
 }
 
 @Deprecated('Use AppsOnDevicesConnectionConfiguration')
@@ -40,10 +38,9 @@ class HandoffConnectionConfiguration extends AppsOnDevicesConnectionConfiguratio
   HandoffReaderDelegate? get readerDelegate => _handoffReaderDelegate;
 
   @Deprecated('Use AppsOnDevicesConnectionConfiguration')
-  const HandoffConnectionConfiguration({
-    required HandoffReaderDelegate? readerDelegate,
-  })  : _handoffReaderDelegate = readerDelegate,
-        super(readerDelegate: readerDelegate);
+  const HandoffConnectionConfiguration({required HandoffReaderDelegate? readerDelegate})
+    : _handoffReaderDelegate = readerDelegate,
+      super(readerDelegate: readerDelegate);
 }
 
 class InternetConnectionConfiguration extends ConnectionConfiguration {
