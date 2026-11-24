@@ -108,15 +108,27 @@ class TerminalPlatformPlugin(
 
     private val terminal: Terminal get() = Terminal.getInstance()
 
+    companion object {
+        // Null when another plugin initialized Terminal: that delegate is not ours to rebind.
+        private var terminalDelegate: TerminalDelegatePlugin? = null
+    }
+
     override fun onInit(shouldPrintLogs: Boolean) {
         // If a hot restart is performed in flutter the terminal is already initialized but we need to
         // clean it up
         if (Terminal.isInitialized()) {
+            // Terminal is a process singleton and cannot be initialized twice. When Android starts
+            // a second FlutterEngine in the same process, the delegate still holds the first
+            // engine's handlers: connection token requests go to a dead channel, nobody answers,
+            // and connecting fails with "Timed out waiting for connection token" until the process
+            // is killed. Point the delegate at this engine instead.
+            terminalDelegate?.rebind(handlers)
             clean()
             return
         }
 
         val delegate = TerminalDelegatePlugin(handlers)
+        terminalDelegate = delegate
         Terminal.init(
             applicationContext,
             if (shouldPrintLogs) LogLevel.VERBOSE else LogLevel.NONE,

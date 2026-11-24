@@ -11,8 +11,18 @@ import mek.stripeterminal.api.TerminalHandlersApi
 import mek.stripeterminal.mappings.toApi
 import mek.stripeterminal.runOnMainThread
 
-class TerminalDelegatePlugin(private val _handlers: TerminalHandlersApi) :
+class TerminalDelegatePlugin(handlers: TerminalHandlersApi) :
     ConnectionTokenProvider, TerminalListener {
+    // The Stripe SDK keeps this delegate for the life of the process, so the
+    // handlers must follow whichever Flutter engine is current. See
+    // TerminalPlatformPlugin.onInit.
+    @Volatile
+    private var _handlers: TerminalHandlersApi = handlers
+
+    fun rebind(handlers: TerminalHandlersApi) {
+        _handlers = handlers
+    }
+
     override fun fetchConnectionToken(callback: ConnectionTokenCallback) = runOnMainThread {
         _handlers.requestConnectionToken(
             { error ->
