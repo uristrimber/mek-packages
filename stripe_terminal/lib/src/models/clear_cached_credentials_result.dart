@@ -6,8 +6,5 @@ class ClearCachedCredentialsResult {
   final bool isSuccessful;
   final TerminalException? error;
 
-  const ClearCachedCredentialsResult({
-    required this.isSuccessful,
-    required this.error,
-  });
+  const ClearCachedCredentialsResult({required this.isSuccessful, required this.error});
 }

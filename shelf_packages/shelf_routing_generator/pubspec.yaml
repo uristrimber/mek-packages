@@ -3,30 +3,31 @@ description: Generator for routing class methods with support for path parameter
 repository: https://github.com/BreX900/mek-packages
 issue_tracker: https://github.com/BreX900/mek-packages/issues
 homepage: https://github.com/BreX900/mek-packages/tree/main/shelf_packages/shelf_routing_generator
-version: 2.0.2
+version: 3.0.0
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.12.0
 
 scripts:
   # To generate .g files:
   generate-code: dart run build_runner watch --delete-conflicting-outputs --verbose
+
+  format: dart format .
 
   publish: dart format . && dart pub publish
 
 dependencies:
   shelf: ^1.4.2
   shelf_router: ^1.1.4
-  shelf_routing: ^1.0.0
+  shelf_routing: ^1.1.0
   http_methods: ^1.1.0
 
-  analyzer: '>=9.0.0 <11.0.0'
-  build: ^4.0.3
-  source_gen: ^4.1.1
+  analyzer: '>=10.0.0 <13.0.0'
+  build: ^4.0.4
+  source_gen: ^4.1.2
   code_builder: ^4.4.0
 
   collection: ^1.19.1
-  recase: ^4.1.0
 
 dev_dependencies:
   mek_lints: ^4.0.0

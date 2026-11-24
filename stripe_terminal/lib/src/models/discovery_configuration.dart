@@ -25,10 +25,7 @@ class BluetoothDiscoveryConfiguration extends DiscoveryConfiguration {
   final bool isSimulated;
   final Duration? timeout;
 
-  const BluetoothDiscoveryConfiguration({
-    this.isSimulated = false,
-    this.timeout,
-  });
+  const BluetoothDiscoveryConfiguration({this.isSimulated = false, this.timeout});
 }
 
 /// ONLY ON IOS
@@ -55,9 +52,7 @@ class BluetoothDiscoveryConfiguration extends DiscoveryConfiguration {
 class BluetoothProximityDiscoveryConfiguration extends DiscoveryConfiguration {
   final bool isSimulated;
 
-  const BluetoothProximityDiscoveryConfiguration({
-    this.isSimulated = false,
-  });
+  const BluetoothProximityDiscoveryConfiguration({this.isSimulated = false});
 }
 
 /// ONLY ON ANDROID
@@ -104,9 +99,7 @@ class InternetDiscoveryConfiguration extends DiscoveryConfiguration {
 class TapToPayDiscoveryConfiguration extends DiscoveryConfiguration {
   final bool isSimulated;
 
-  const TapToPayDiscoveryConfiguration({
-    this.isSimulated = false,
-  });
+  const TapToPayDiscoveryConfiguration({this.isSimulated = false});
 }
 
 /// ONLY ON ANDROID
@@ -114,8 +107,5 @@ class UsbDiscoveryConfiguration extends DiscoveryConfiguration {
   final bool isSimulated;
   final Duration? timeout;
 
-  const UsbDiscoveryConfiguration({
-    this.isSimulated = false,
-    this.timeout,
-  });
+  const UsbDiscoveryConfiguration({this.isSimulated = false, this.timeout});
 }

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
-import 'package:open_api_specification/open_api.dart';
 import 'package:open_api_specification/open_api_spec.dart';
 import 'package:shelf_open_api/shelf_open_api.dart';
 import 'package:shelf_open_api_generator/src/dto/config.dart';
@@ -53,7 +52,7 @@ class OpenApiHandler {
     final (element, annotation) = annotatedElement;
 
     final fileFormats = annotation.getField('formats')!.toSetValue()!.map((object) {
-      return switch (object.variable!.requireName) {
+      return switch (object.variable!.displayName) {
         'json' => OpenApiFileFormat.json,
         'yaml' => OpenApiFileFormat.yaml,
         final format => throw InvalidGenerationSourceError(
@@ -74,6 +73,8 @@ class OpenApiHandler {
       info: _buildInfoSpecs(pubspec),
       servers: config.servers,
       paths: routesInPaths.map((path, routes) {
+        path = path.endsWith('/') ? path.substring(0, path.length - 1) : path;
+        path = path.replaceAll('<', '{').replaceAll('>', '}');
         final item = ItemPathOpenApi.from(
           operations: routes.toMap((route) {
             final operation = route.buildOperation();
@@ -82,7 +83,10 @@ class OpenApiHandler {
         );
         return MapEntry(path, item);
       }),
-      components: ComponentsOpenApi(securitySchemes: config.securitySchemes),
+      components: ComponentsOpenApi(
+        schemas: schemasRegistry.schemas,
+        securitySchemes: config.securitySchemes,
+      ),
       tags: _buildTags(routes),
     );
   }
@@ -107,12 +111,11 @@ class OpenApiHandler {
 
   List<(String, String)> code(Pubspec? pubspec, List<OpenRouteHandler> routes) {
     final openApi = _buildOpenApi(pubspec, routes);
-    final rawOpenApi = organizeOpenApi(openApi.toJson());
 
     return fileFormats.map((fileFormat) {
       final code = switch (fileFormat) {
-        OpenApiFileFormat.json => _jsonEncoder.convert(rawOpenApi),
-        OpenApiFileFormat.yaml => _yamlEncoder.convert(rawOpenApi),
+        OpenApiFileFormat.json => _jsonEncoder.convert(openApi),
+        OpenApiFileFormat.yaml => _yamlEncoder.convert(openApi.toJson()),
       };
       return ('.${fileFormat.name}', code);
     }).toList();

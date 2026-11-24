@@ -13,8 +13,9 @@ class HttpApiClient extends ApiClient {
 
   @override
   Future<ApiClientResponse> onSend(ApiClientRequest request) async {
-    final response = await httpClient
-        .send(Request(request.method, request.uri)..body = jsonEncode(request.data));
+    final response = await httpClient.send(
+      Request(request.method, request.uri)..body = jsonEncode(request.data),
+    );
 
     return ApiClientResponse(
       request: request,

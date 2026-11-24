@@ -12,17 +12,20 @@ enum TerminalExceptionCode {
 
   /// See [message] field
   readerNotRecovered(
-      'Call this method with the [Reader] returned from the [StripeTerminal.discoverReaders] method.'),
+    'Call this method with the [Reader] returned from the [StripeTerminal.discoverReaders] method.',
+  ),
 
   /// See [message] field
   paymentIntentNotRecovered(
-      'Call this method with the [PaymentIntent] returned from the [StripeTerminal.createPaymentIntent] '
-      'or [StripeTerminal.retrievePaymentIntent] methods.'),
+    'Call this method with the [PaymentIntent] returned from the [StripeTerminal.createPaymentIntent] '
+    'or [StripeTerminal.retrievePaymentIntent] methods.',
+  ),
 
   /// See [message] field
   setupIntentNotRecovered(
-      'Call this method with the [SetupIntent] returned from the [StripeTerminal.createSetupIntent] '
-      'or [StripeTerminal.retrieveSetupIntent] methods.'),
+    'Call this method with the [SetupIntent] returned from the [StripeTerminal.createSetupIntent] '
+    'or [StripeTerminal.retrieveSetupIntent] methods.',
+  ),
 
   // Android/IOS sdk
 
@@ -598,8 +601,7 @@ enum TerminalExceptionCode {
   barcodeScanningUnsupportedDevice,
 
   /// Only Android. Simulated offline mode is not available in live mode.
-  simulatedOfflineModeNotAvailableInLivemode,
-  ;
+  simulatedOfflineModeNotAvailableInLivemode;
 
   final String? message;
 
@@ -624,10 +626,10 @@ class TerminalException implements Exception {
 
   @override
   String toString() => [
-        'TerminalException: ${code.name}',
-        message,
-        if (paymentIntent != null) paymentIntent,
-        if (apiError != null) apiError,
-        if (stackTrace != null) stackTrace,
-      ].join('\n');
+    'TerminalException: ${code.name}',
+    message,
+    if (paymentIntent != null) paymentIntent,
+    if (apiError != null) apiError,
+    if (stackTrace != null) stackTrace,
+  ].join('\n');
 }

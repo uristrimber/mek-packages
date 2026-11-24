@@ -74,7 +74,8 @@ class LoggingMobileReaderDelegate extends MobileReaderDelegate
   @override
   void onBatteryLevelUpdate(double batteryLevel, BatteryStatus? batteryStatus, bool isCharging) {
     onLog(
-        'onBatteryLevelUpdate: batteryLevel: $batteryLevel $batteryStatus isCharging: $isCharging');
+      'onBatteryLevelUpdate: batteryLevel: $batteryLevel $batteryStatus isCharging: $isCharging',
+    );
   }
 
   @override

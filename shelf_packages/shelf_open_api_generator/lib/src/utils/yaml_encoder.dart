@@ -47,8 +47,8 @@ class _YamlWriter {
     required this.indent,
     required this.shouldMultilineStringInBlock,
     required this.toEncodable,
-    required StringSink sink,
-  }) : _sink = sink;
+    required this._sink,
+  });
 
   void write(Object? object) {
     if (object == null) {

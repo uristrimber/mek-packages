@@ -3,14 +3,14 @@ library stripe_terminal;
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:mek_stripe_terminal/mek_stripe_terminal.dart';
 import 'package:mek_stripe_terminal/src/models/card.dart';
 import 'package:mek_stripe_terminal/src/models/cart.dart';
-import 'package:mek_stripe_terminal/src/models/clear_cached_credentials_result.dart';
 import 'package:mek_stripe_terminal/src/models/charge.dart';
+import 'package:mek_stripe_terminal/src/models/clear_cached_credentials_result.dart';
 import 'package:mek_stripe_terminal/src/models/connection_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/disconnect_reason.dart';
 import 'package:mek_stripe_terminal/src/models/discovery_configuration.dart';
+import 'package:mek_stripe_terminal/src/models/discovery_filter.dart';
 import 'package:mek_stripe_terminal/src/models/easy_connect_configuration.dart';
 import 'package:mek_stripe_terminal/src/models/location.dart';
 import 'package:mek_stripe_terminal/src/models/payment.dart';
@@ -44,7 +44,7 @@ abstract class TerminalPlatform {
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<ClearCachedCredentialsResult> clearCachedCredentials();
 
-//region Reader discovery, connection and updates
+  //region Reader discovery, connection and updates
 
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<ConnectionStatus> getConnectionStatus();
@@ -81,9 +81,9 @@ abstract class TerminalPlatform {
 
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<void> setSimulatorConfiguration(SimulatorConfiguration configuration);
-//endregion
+  //endregion
 
-//region Taking payments
+  //region Taking payments
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<PaymentStatus> getPaymentStatus();
 
@@ -108,9 +108,9 @@ abstract class TerminalPlatform {
   Future<void> stopProcessPaymentIntent(int operationId);
 
   Future<PaymentIntent> cancelPaymentIntent(String paymentIntentId);
-//endregion
+  //endregion
 
-//region Saving payment details for later use
+  //region Saving payment details for later use
 
   Future<SetupIntent> createSetupIntent({
     required String? customerId,
@@ -133,9 +133,9 @@ abstract class TerminalPlatform {
   Future<void> stopProcessSetupIntent(int operationId);
 
   Future<SetupIntent> cancelSetupIntent(String setupIntentId);
-//endregion
+  //endregion
 
-//region Card-present refunds
+  //region Card-present refunds
 
   @MethodApi(swift: MethodApiType.callbacks)
   Future<Refund> startProcessRefund({
@@ -153,9 +153,9 @@ abstract class TerminalPlatform {
 
   Future<void> stopProcessRefund(int operationId);
 
-//endregion
+  //endregion
 
-//region Display information to customers
+  //region Display information to customers
 
   Future<void> setReaderDisplay(Cart cart);
 
@@ -163,9 +163,9 @@ abstract class TerminalPlatform {
 
   @MethodApi(kotlin: MethodApiType.sync, swift: MethodApiType.sync)
   Future<void> setTapToPayUXConfiguration(TapToPayUxConfiguration configuration);
-//endregion
+  //endregion
 
-//region EasyConnect
+  //region EasyConnect
   @MethodApi(swift: MethodApiType.callbacks)
   Future<Reader> startEasyConnect({
     required int operationId,
@@ -173,7 +173,7 @@ abstract class TerminalPlatform {
   });
 
   Future<void> stopEasyConnect(int operationId);
-//endregion
+  //endregion
 
   // TODO: add support to collectData and setLocalMobileUxConfiguration methods
 

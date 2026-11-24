@@ -1,4 +1,16 @@
 
+## 3.0.0
+- fix!: a camel case is used for query parameter 
+- feat: allow Dart `Set` type
+- feat: added support to `Decimal`, `Rational` and `Fixed` types
+- feat: added support enums for query parameters
+- feat: added support for custom type are using `fromJson` constructor or `toJson` method 
+
+## 2.0.3
+- build: allow `analyzer: '>=10.0.0 <13.0.0'`
+- build: allow `build: ^4.0.4`
+- build: allow `source_gen: ^4.1.2`
+
 ## 2.0.2
 - build: allow `analyzer: '>=8.1.1 <11.0.0'`
 

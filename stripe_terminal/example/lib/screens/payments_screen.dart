@@ -25,12 +25,14 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
   CancelableFuture<PaymentIntent>? _processingPaymentIntent;
 
   Future<void> _createPaymentIntent() async {
-    final paymentIntent = await Terminal.instance.createPaymentIntent(PaymentIntentParameters(
-      amount: 200,
-      currency: K.currency,
-      captureMethod: CaptureMethod.automatic,
-      paymentMethodTypes: [PaymentMethodType.cardPresent],
-    ));
+    final paymentIntent = await Terminal.instance.createPaymentIntent(
+      PaymentIntentParameters(
+        amount: 200,
+        currency: K.currency,
+        captureMethod: CaptureMethod.automatic,
+        paymentMethodTypes: [PaymentMethodType.cardPresent],
+      ),
+    );
     setState(() => _paymentIntent = paymentIntent);
     showSnackBar('Payment intent created!');
   }
@@ -88,10 +90,7 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ListTile(
-              selected: true,
-              title: Text('Payment Status: ${paymentStatus.name}'),
-            ),
+            ListTile(selected: true, title: Text('Payment Status: ${paymentStatus.name}')),
             const Divider(height: 32.0),
             FilledButton.tonal(
               onPressed: !isMutating ? () => mutate(_createPaymentIntent) : null,
@@ -106,12 +105,13 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
             const SizedBox(height: 8.0),
             if (processingPaymentIntent == null)
               FilledButton(
-                onPressed: !isMutating &&
-                        connectedReader != null &&
-                        paymentIntent != null &&
-                        paymentIntent.status == PaymentIntentStatus.requiresPaymentMethod
-                    ? () => mutate(() async => _processPaymentIntent(paymentIntent))
-                    : null,
+                onPressed:
+                    !isMutating &&
+                            connectedReader != null &&
+                            paymentIntent != null &&
+                            paymentIntent.status == PaymentIntentStatus.requiresPaymentMethod
+                        ? () => mutate(() async => _processPaymentIntent(paymentIntent))
+                        : null,
                 child: const Text('Process PaymentIntent'),
               )
             else
@@ -120,10 +120,7 @@ class _PaymentsScreenState extends ConsumerState<PaymentsScreen> with StateTools
                 child: const Text('Cancel Processing Payment'),
               ),
             const Divider(height: 32.0),
-            if (paymentIntent != null)
-              ListTile(
-                title: Text('$paymentIntent'),
-              )
+            if (paymentIntent != null) ListTile(title: Text('$paymentIntent')),
           ],
         ),
       ),

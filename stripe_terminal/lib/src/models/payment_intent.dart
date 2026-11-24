@@ -199,9 +199,7 @@ class AmountDetails {
   final Tip? tip;
 
   @internal
-  const AmountDetails({
-    required this.tip,
-  });
+  const AmountDetails({required this.tip});
 }
 
 // PARAMETERS
@@ -310,7 +308,7 @@ enum CaptureMethod {
   /// Place a hold on the funds when the customer authorizes the payment, but don’t capture
   /// the funds until later. Will require an explicit call to capture payments.
   /// (Not all payment methods support this.)
-  manual
+  manual,
 }
 
 enum ConfirmationMethod {
@@ -329,7 +327,7 @@ enum PaymentIntentUsage {
   onSession,
 
   /// Use “off_session” if your customer may or may not be present in your checkout flow.
-  offSession
+  offSession,
 }
 
 /// The PaymentMethodOptionsParameters contains options for PaymentMethod creation.
@@ -338,9 +336,7 @@ class PaymentMethodOptionsParameters with _$PaymentMethodOptionsParameters {
   /// Card-present-specific configuration for this PaymentMethod.
   final CardPresentParameters cardPresentParameters;
 
-  const PaymentMethodOptionsParameters({
-    required this.cardPresentParameters,
-  });
+  const PaymentMethodOptionsParameters({required this.cardPresentParameters});
 }
 
 /// Configuration for confirming a payment intent.
@@ -349,7 +345,5 @@ class ConfirmPaymentIntentConfiguration {
   /// The URL to redirect the customer back to after authentication.
   final String? returnUrl;
 
-  const ConfirmPaymentIntentConfiguration({
-    this.returnUrl,
-  });
+  const ConfirmPaymentIntentConfiguration({this.returnUrl});
 }

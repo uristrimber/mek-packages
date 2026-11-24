@@ -18,9 +18,7 @@ class Tip with _$Tip {
   final int? amount;
 
   @internal
-  const Tip({
-    required this.amount,
-  });
+  const Tip({required this.amount});
 }
 
 // PARAMETERS
@@ -31,7 +29,5 @@ class TippingConfiguration with _$TippingConfiguration {
   /// The amount of the payment total eligible for tips.
   final int eligibleAmount;
 
-  const TippingConfiguration({
-    required this.eligibleAmount,
-  });
+  const TippingConfiguration({required this.eligibleAmount});
 }

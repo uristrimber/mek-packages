@@ -101,7 +101,7 @@ class MountRouteHandler extends RouteHandler {
 
 class HttpRouteHandler extends RouteHandler {
   final String verb;
-  final FormalParameterElement? bodyParameter;
+  final RouteAccept? bodyParameter;
   final bool hasRequest;
   final List<FormalParameterElement> pathParameters;
   final List<RouteHeaderHandler> headers;
@@ -188,7 +188,7 @@ class HttpRouteHandler extends RouteHandler {
       pathParameters.add(parameter);
     }
 
-    FormalParameterElement? bodyParameter;
+    RouteAccept? bodyParameter;
     if (strict && parametersIterator.moveNext()) {
       if (route.verb == 'GET') {
         throw InvalidGenerationSourceError('"GET" endpoint cannot have a body.', element: element);
@@ -196,8 +196,14 @@ class HttpRouteHandler extends RouteHandler {
       final parameter = parametersIterator.current;
 
       bool check(DartType type) {
-        if (type.isDartCoreBool || type.isDartCoreString) return true;
-        if (type.isDartCoreInt || type.isDartCoreDouble || type.isDartCoreNum) return true;
+        if (type.isDartCoreString) return true;
+
+        if (type.isDartCoreBool ||
+            type.isDartCoreInt ||
+            type.isDartCoreDouble ||
+            type.isDartCoreNum) {
+          return true;
+        }
 
         if (type is! InterfaceType) return false;
 
@@ -214,7 +220,15 @@ class HttpRouteHandler extends RouteHandler {
         }
       }
 
-      if (!check(parameter.type)) {
+      if (byteStreamChecker.isExactlyType(parameter.type)) {
+        bodyParameter = RouteAcceptBytes(parameter.type);
+      } else if (parameter.type.isDartCoreString) {
+        bodyParameter = RouteAcceptText(parameter.type);
+      } else {
+        bodyParameter = check(parameter.type) ? RouteAcceptJson(parameter.type) : null;
+      }
+
+      if (bodyParameter == null) {
         final parameterTypeName = parameter.type.getDisplayString();
         throw InvalidGenerationSourceError(
           'invalid body parameter type.\n'
@@ -223,7 +237,6 @@ class HttpRouteHandler extends RouteHandler {
           element: parameter.enclosingElement,
         );
       }
-      bodyParameter = parameter;
     }
 
     if (parametersIterator.moveNext()) {
@@ -341,5 +354,23 @@ class RouteReturnsText extends RouteReturns {
 class RouteReturnsJson extends RouteReturns {
   final DartType type;
 
-  RouteReturnsJson(this.type);
+  const RouteReturnsJson(this.type);
+}
+
+sealed class RouteAccept {
+  final DartType type;
+
+  const RouteAccept(this.type);
+}
+
+class RouteAcceptText extends RouteAccept {
+  const RouteAcceptText(super.type);
+}
+
+class RouteAcceptBytes extends RouteAccept {
+  const RouteAcceptBytes(super.type);
+}
+
+class RouteAcceptJson extends RouteAccept {
+  const RouteAcceptJson(super.type);
 }
